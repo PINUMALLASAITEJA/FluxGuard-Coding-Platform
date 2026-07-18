@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Log files
+*.log
+
+# Environment files
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
