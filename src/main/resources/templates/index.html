@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coding Platform | Home</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <a th:href="@{/}">
+                <span class="logo-blue">Flux</span>Code
+            </a>
+        </div>
+
+        <nav>
+
+            <ul class="nav-links">
+
+                <li><a th:href="@{/}">Home</a></li>
+
+                <li><a th:href="@{/contests}">Contests</a></li>
+
+                <li><a th:href="@{/problems}">Problems</a></li>
+
+                <li><a th:href="@{/leaderboard}">Leaderboard</a></li>
+
+                <li><a th:href="@{/login}" class="login-btn">Login</a></li>
+
+                <li><a th:href="@{/register}" class="register-btn">Register</a></li>
+
+            </ul>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="hero-left">
+
+            <h1>
+                Learn.<br>
+                Practice.<br>
+                <span class="blue-text">Compete.</span>
+            </h1>
+
+            <p>
+                Solve coding challenges, participate in programming contests,
+                improve your problem-solving skills, and prepare for technical interviews.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a th:href="@{/register}" class="primary-btn">
+                    Get Started
+                </a>
+
+                <a th:href="@{/login}" class="secondary-btn">
+                    Login
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-card">
+
+                <h3>Today's Challenge</h3>
+
+                <h2>Maximum Subarray</h2>
+
+                <span class="difficulty medium">
+                    Medium
+                </span>
+
+                <p>
+
+                    Solve today's featured challenge and improve your ranking.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Coding Platform.
+            Built for learning, competitions and future FluxGuard integration.
+
+        </p>
+
+    </footer>
+
+
+
+    <script th:src="@{/js/main.js}"></script>
+
+</body>
+
+</html>

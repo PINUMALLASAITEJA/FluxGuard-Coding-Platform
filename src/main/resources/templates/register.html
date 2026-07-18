@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register | Coding Platform</title>
+
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <a th:href="@{/}">
+            <span>Code</span>Platform
+        </a>
+    </div>
+
+    <nav>
+
+        <ul>
+
+            <li>
+                <a th:href="@{/}">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/login}">
+                    Login
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/register}" class="active">
+                    Register
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+</header>
+
+
+<section class="login-section">
+
+    <div class="login-container">
+
+        <div class="left-panel">
+
+            <h1>Create Account 🚀</h1>
+
+            <p>
+
+                Join thousands of developers improving their coding skills through
+                contests and practice problems.
+
+            </p>
+
+            <ul>
+
+                <li>✔ Participate in Coding Contests</li>
+
+                <li>✔ Solve DSA Problems</li>
+
+                <li>✔ Track Your Progress</li>
+
+                <li>✔ View Global Leaderboard</li>
+
+            </ul>
+
+        </div>
+
+
+        <div class="right-panel">
+
+            <h2>Create Account</h2>
+
+            <p class="subtitle">
+
+                Register to continue
+
+            </p>
+
+
+            <form
+                    th:action="@{/register}"
+                    method="post"
+                    th:object="${registerRequest}"
+                    id="registerForm">
+
+                <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+                <div class="input-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                            type="text"
+                            th:field="*{fullName}"
+                            placeholder="Enter your full name"
+                            required>
+                    <div class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Email</label>
+
+                    <input
+                            type="email"
+                            th:field="*{email}"
+                            placeholder="Enter your email"
+                            required>
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Password</label>
+
+                    <input
+                            type="password"
+                            th:field="*{password}"
+                            placeholder="Create password"
+                            required>
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+                </div>
+
+                <button
+                        type="submit"
+                        class="login-btn">
+
+                    Register
+
+                </button>
+
+            </form>
+
+
+            <div class="divider">
+
+                <span>OR</span>
+
+            </div>
+
+
+            <p class="register-text">
+
+                Already have an account?
+
+                <a th:href="@{/login}">
+                    Login
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script th:src="@{/js/auth.js}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,376 @@
+/* ===========================
+   GOOGLE FONT
+=========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+
+/* ===========================
+   GLOBAL
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+    background:#f7f9fc;
+    color:#222;
+    line-height:1.6;
+
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+ul{
+    list-style:none;
+}
+
+
+
+/* ===========================
+   NAVBAR
+=========================== */
+
+.navbar{
+
+    width:100%;
+    height:75px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 8%;
+
+    background:#ffffff;
+
+    box-shadow:0 3px 15px rgba(0,0,0,.05);
+
+    position:sticky;
+    top:0;
+
+    z-index:999;
+
+}
+
+
+
+.logo{
+
+    font-size:30px;
+    font-weight:700;
+
+}
+
+.logo-blue{
+
+    color:#2563eb;
+
+}
+
+.logo a{
+
+    color:#222;
+
+}
+
+
+
+.nav-links{
+
+    display:flex;
+    align-items:center;
+    gap:35px;
+
+}
+
+.nav-links li a{
+
+    color:#555;
+    font-weight:500;
+
+    transition:.3s;
+
+}
+
+.nav-links li a:hover{
+
+    color:#2563eb;
+
+}
+
+
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.login-btn{
+
+    color:#2563eb !important;
+
+}
+
+.register-btn{
+
+    background:#2563eb;
+    color:white !important;
+
+    padding:10px 24px;
+
+    border-radius:8px;
+
+    transition:.3s;
+
+}
+
+.register-btn:hover{
+
+    background:#1749b8;
+
+}
+
+
+
+/* ===========================
+   HERO SECTION
+=========================== */
+
+.hero{
+
+    width:100%;
+    min-height:90vh;
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:80px 8%;
+
+    gap:60px;
+
+}
+
+
+
+.hero-left{
+
+    flex:1;
+
+}
+
+
+
+.hero-left h1{
+
+    font-size:65px;
+
+    line-height:1.2;
+
+    margin-bottom:25px;
+
+    color:#1f2937;
+
+}
+
+.blue-text{
+
+    color:#2563eb;
+
+}
+
+
+
+.hero-left p{
+
+    font-size:18px;
+
+    color:#666;
+
+    max-width:600px;
+
+    margin-bottom:40px;
+
+}
+
+
+
+.hero-buttons{
+
+    display:flex;
+    gap:20px;
+
+}
+
+
+
+/* ===========================
+   PRIMARY BUTTON
+=========================== */
+
+.primary-btn{
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:15px 32px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.primary-btn:hover{
+
+    background:#1749b8;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/* ===========================
+   SECONDARY BUTTON
+=========================== */
+
+.secondary-btn{
+
+    background:white;
+
+    color:#2563eb;
+
+    border:2px solid #2563eb;
+
+    padding:15px 32px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.secondary-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+
+/* ===========================
+   HERO RIGHT
+=========================== */
+
+.hero-right{
+
+    flex:1;
+
+    display:flex;
+    justify-content:center;
+
+}
+
+
+
+.hero-card{
+
+    width:380px;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+    transition:.4s;
+
+}
+
+.hero-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+
+
+.hero-card h3{
+
+    color:#777;
+
+    font-size:16px;
+
+}
+
+
+
+.hero-card h2{
+
+    margin-top:10px;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.hero-card p{
+
+    margin-top:20px;
+
+    color:#666;
+
+}
+
+
+
+/* ===========================
+   DIFFICULTY
+=========================== */
+
+.difficulty{
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.medium{
+
+    background:#fff4d8;
+
+    color:#b7791f;
+
+}

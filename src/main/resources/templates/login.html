@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Coding Platform</title>
+
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <a th:href="@{/}">
+                <span>Code</span>Platform
+            </a>
+        </div>
+
+        <nav>
+
+            <ul>
+
+                <li>
+                    <a th:href="@{/}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/login}" class="active">
+                        Login
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/register}">
+                        Register
+                    </a>
+                </li>
+
+            </ul>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- ================= LOGIN SECTION ================= -->
+
+    <section class="login-section">
+
+        <div class="login-container">
+
+            <div class="left-panel">
+
+                <h1>Welcome Back 👋</h1>
+
+                <p>
+
+                    Continue solving coding challenges,
+                    participate in contests,
+                    and improve your programming skills.
+
+                </p>
+
+                <ul>
+
+                    <li>✔ Participate in Coding Contests</li>
+
+                    <li>✔ Solve DSA Problems</li>
+
+                    <li>✔ Track Your Progress</li>
+
+                    <li>✔ View Global Leaderboard</li>
+
+                </ul>
+
+            </div>
+
+
+
+            <div class="right-panel">
+
+                <h2>Login</h2>
+
+                <p class="subtitle">
+                    Sign in to continue
+                </p>
+
+                <form
+                        th:action="@{/login}"
+                        method="post"
+                        id="loginForm">
+
+                    <div th:if="${param.registered}" class="success-message">
+                        Registration successful. Please sign in.
+                    </div>
+
+                    <div th:if="${param.error}" class="error-message">
+                        Invalid email or password.
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Email</label>
+
+                        <input
+                                type="email"
+                                name="username"
+                                placeholder="Enter your email"
+                                required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Password</label>
+
+                        <input
+                                type="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required>
+
+                    </div>
+
+                    <button
+                            type="submit"
+                            class="login-btn">
+
+                        Login
+
+                    </button>
+
+                </form>
+
+
+                <div class="divider">
+
+                    <span>OR</span>
+
+                </div>
+
+
+                <p class="register-text">
+
+                    Don't have an account?
+
+                    <a th:href="@{/register}">
+                        Create Account
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <script th:src="@{/js/auth.js}"></script>
+
+</body>
+
+</html>

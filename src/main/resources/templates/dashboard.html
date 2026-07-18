@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Coding Platform</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <script th:src="@{/js/dashboard.js}" defer></script>
+</head>
+<body>
+    <header class="navbar" role="banner">
+        <div class="brand">
+            <a th:href="@{/dashboard}">Coding Platform</a>
+        </div>
+        <nav class="nav-links" aria-label="Primary navigation">
+            <a th:href="@{/dashboard}" class="active">Dashboard</a>
+            <a th:href="@{/contests}">Contests</a>
+            <a th:href="@{/problems}">Problems</a>
+            <a th:href="@{/leaderboard}">Leaderboard</a>
+            <a th:href="@{/profile}">Profile</a>
+            <a th:href="@{/fluxguard}">FluxGuard</a>
+            <span class="user-name" th:text="${dashboardView.userName}">User</span>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="dashboard-shell" th:if="${dashboardView != null}" role="main">
+        <section class="welcome-banner" aria-labelledby="welcome-heading">
+            <div>
+                <p class="eyebrow">Welcome back</p>
+                <h1 id="welcome-heading" th:text="${dashboardView.greeting}">Good Evening, User</h1>
+                <p class="subtitle" th:text="${dashboardView.heroSubtitle}">Ready to solve today's challenge?</p>
+            </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Dashboard statistics">
+            <article class="stat-card">
+                <h2>Problems Solved</h2>
+                <p th:text="${dashboardView.problemsSolved}">0</p>
+            </article>
+            <article class="stat-card">
+                <h2>Contests Joined</h2>
+                <p th:text="${dashboardView.contestsJoined}">0</p>
+            </article>
+            <article class="stat-card">
+                <h2>Submissions</h2>
+                <p th:text="${dashboardView.submissions}">0</p>
+            </article>
+            <article class="stat-card">
+                <h2>Current Rank</h2>
+                <p th:text="${dashboardView.currentRank}">Unranked</p>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <article class="panel active-contest-panel">
+                <div class="panel-header">
+                    <h2>Active Contest</h2>
+                </div>
+                <p th:if="${dashboardView.activeContestName == null}">No active contest.</p>
+                <div th:if="${dashboardView.activeContestName != null}">
+                    <h3 th:text="${dashboardView.activeContestName}">Weekly Sprint Challenge</h3>
+                    <p><strong>Start Time:</strong> <span th:text="${dashboardView.activeContestStartTime}">Starts at 8:00 PM UTC</span></p>
+                    <p><strong>Duration:</strong> <span th:text="${dashboardView.activeContestDuration}">48 Hours</span></p>
+                </div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <h2>Recent Activity</h2>
+                </div>
+                <ul class="list" th:if="${dashboardView.recentActivity != null and !#lists.isEmpty(dashboardView.recentActivity)}">
+                    <li th:each="item : ${dashboardView.recentActivity}" th:text="${item}"></li>
+                </ul>
+                <p class="empty-state" th:if="${dashboardView.recentActivity == null or #lists.isEmpty(dashboardView.recentActivity)}">No submissions yet.</p>
+            </article>
+        </section>
+
+        <section class="panel contests-panel">
+            <div class="panel-header">
+                <h2>Upcoming Contests</h2>
+            </div>
+            <ul class="list" th:if="${dashboardView.upcomingContests != null and !#lists.isEmpty(dashboardView.upcomingContests)}">
+                <li th:each="item : ${dashboardView.upcomingContests}" th:text="${item}"></li>
+            </ul>
+            <p class="empty-state" th:if="${dashboardView.upcomingContests == null or #lists.isEmpty(dashboardView.upcomingContests)}">No upcoming contests.</p>
+        </section>
+    </main>
+</body>
+</html>
