@@ -1,13 +1,11 @@
-FROM eclipse-temurin:21-jdk
+FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
 COPY . .
 
-# 🔥 give execute permission
 RUN chmod +x mvnw
 
-# build
 RUN ./mvnw clean install -DskipTests
 
 EXPOSE 8080
