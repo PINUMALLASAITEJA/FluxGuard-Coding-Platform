@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-slim AS builder
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN ./mvnw dependency:go-offline -B
 COPY src ./src
 RUN ./mvnw clean package -DskipTests -B
 
-FROM eclipse-temurin:21-jre-slim
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
