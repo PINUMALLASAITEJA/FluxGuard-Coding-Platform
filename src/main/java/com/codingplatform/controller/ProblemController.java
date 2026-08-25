@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codingplatform.model.Problem;
 import com.codingplatform.service.ProblemService;
@@ -15,6 +17,7 @@ import com.codingplatform.service.ExercismImportService;
 @Controller
 public class ProblemController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
     private final ProblemService problemService;
     private final ExercismImportService exercismImportService;
 
@@ -30,12 +33,15 @@ public class ProblemController {
         return "problems";
     }
 
-    @PostMapping("/problems/import-exercism")
+    @PostMapping({"/problems/import", "/problems/import-exercism"})
     public String importExercismProblems(Model model) {
+        logger.info("Exercism import endpoint entered");
         try {
-            model.addAttribute("importMessage", "Imported " + exercismImportService.importProblems()
-                    + " Exercism problems.");
+            int imported = exercismImportService.importProblems();
+            logger.info("Exercism import service completed imported={}", imported);
+            model.addAttribute("importMessage", "Imported " + imported + " Exercism problems.");
         } catch (IllegalStateException exception) {
+            logger.error("Exercism import endpoint failed", exception);
             model.addAttribute("importMessage", exception.getMessage());
         }
         model.addAttribute("problems", problemService.getAllProblems());

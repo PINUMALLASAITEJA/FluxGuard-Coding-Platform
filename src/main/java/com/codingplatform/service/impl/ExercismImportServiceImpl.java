@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.codingplatform.model.Problem;
 import com.codingplatform.repository.ProblemSourceRepository;
@@ -43,10 +45,24 @@ public class ExercismImportServiceImpl implements ExercismImportService {
     @Override
     @Transactional
     public int importProblems() {
+        logger.info("Exercism import service started transactionActive={}",
+                TransactionSynchronizationManager.isActualTransactionActive());
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                logger.info("Exercism import transaction committed");
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+                logger.info("Exercism import transaction completed status={}", status);
+            }
+        });
         int imported = 0;
         for (String slug : EXERCISES) {
             try {
                 String description = downloadDescription(slug);
+                logger.info("Exercism problem parsed sourceId={} descriptionLength={}", slug, description.length());
                 Problem problem = problemRepository.findBySourceAndSourceId(SOURCE, slug).orElseGet(Problem::new);
                 problem.setSource(SOURCE);
                 problem.setSourceId(slug);
@@ -56,7 +72,9 @@ public class ExercismImportServiceImpl implements ExercismImportService {
                 problem.setTitle(titleFrom(slug, description));
                 problem.setDifficulty("Practice");
                 problem.setDescription(description);
-                problemRepository.save(problem);
+                logger.info("Saving Exercism problem sourceId={} existingId={}", slug, problem.getId());
+                Problem savedProblem = problemRepository.save(problem);
+                logger.info("Saved Exercism problem sourceId={} id={}", slug, savedProblem.getId());
                 imported++;
                 logger.info("Imported Exercism problem source={} sourceId={} title={}", SOURCE, slug,
                         problem.getTitle());
