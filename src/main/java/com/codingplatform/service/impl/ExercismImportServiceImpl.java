@@ -7,6 +7,8 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import com.codingplatform.service.ExercismImportService;
 @Service
 public class ExercismImportServiceImpl implements ExercismImportService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExercismImportServiceImpl.class);
     private static final String SOURCE = "EXERCISM";
     private static final String REVISION = "03f83310ed0547b902d211a05d23b3d74661df02";
     private static final String RAW_BASE = "https://raw.githubusercontent.com/exercism/problem-specifications/"
@@ -43,7 +46,7 @@ public class ExercismImportServiceImpl implements ExercismImportService {
         int imported = 0;
         for (String slug : EXERCISES) {
             try {
-                String description = download(slug);
+                String description = downloadDescription(slug);
                 Problem problem = problemRepository.findBySourceAndSourceId(SOURCE, slug).orElseGet(Problem::new);
                 problem.setSource(SOURCE);
                 problem.setSourceId(slug);
@@ -55,24 +58,34 @@ public class ExercismImportServiceImpl implements ExercismImportService {
                 problem.setDescription(description);
                 problemRepository.save(problem);
                 imported++;
+                logger.info("Imported Exercism problem source={} sourceId={} title={}", SOURCE, slug,
+                        problem.getTitle());
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
+                logger.error("Exercism import interrupted sourceId={}", slug, exception);
                 throw new IllegalStateException("Exercism import interrupted.", exception);
             } catch (Exception exception) {
-                throw new IllegalStateException("Unable to import Exercism exercise: " + slug, exception);
+                logger.error("Unable to import Exercism exercise sourceId={} causeType={} causeMessage={}", slug,
+                        exception.getClass().getName(), exception.getMessage(), exception);
             }
+        }
+        if (imported == 0) {
+            throw new IllegalStateException("No Exercism problems were imported. Check the logs for the first failure.");
         }
         return imported;
     }
 
-    private String download(String slug) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(RAW_BASE + slug + "/description.md")).GET().build();
-        HttpResponse<String> response = httpClient.send(request,
-                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-        if (response.statusCode() != 200) {
-            throw new IllegalStateException("GitHub returned HTTP " + response.statusCode());
+    private String downloadDescription(String slug) throws Exception {
+        for (String filename : List.of("description.md", "instructions.md", "introduction.md")) {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(RAW_BASE + slug + "/" + filename)).GET().build();
+            HttpResponse<String> response = httpClient.send(request,
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            logger.info("Exercism source request sourceId={} file={} status={}", slug, filename, response.statusCode());
+            if (response.statusCode() == 200 && !response.body().isBlank()) {
+                return response.body().trim();
+            }
         }
-        return response.body().trim();
+        throw new IllegalStateException("No supported markdown file found for Exercism exercise: " + slug);
     }
 
     private String titleFrom(String slug, String description) {
