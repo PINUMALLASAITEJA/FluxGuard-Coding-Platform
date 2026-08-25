@@ -12,6 +12,7 @@ import com.codingplatform.repository.ProblemRepository;
 import com.codingplatform.repository.SubmissionRepository;
 import com.codingplatform.repository.UserAccountRepository;
 import com.codingplatform.service.SubmissionService;
+import com.codingplatform.service.CodeExecutionService;
 
 @Service
 public class SubmissionServiceImpl implements SubmissionService {
@@ -19,17 +20,25 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final ProblemRepository problemRepository;
     private final UserAccountRepository userAccountRepository;
+    private final CodeExecutionService codeExecutionService;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, ProblemRepository problemRepository,
-                                 UserAccountRepository userAccountRepository) {
+                                 UserAccountRepository userAccountRepository, CodeExecutionService codeExecutionService) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.userAccountRepository = userAccountRepository;
+        this.codeExecutionService = codeExecutionService;
     }
 
     @Override
     @Transactional
     public Submission submitSolution(UserAccount user, Long problemId, String code, String language) {
+        return submitSolution(user, problemId, code, language, "");
+    }
+
+    @Override
+    @Transactional
+    public Submission submitSolution(UserAccount user, Long problemId, String code, String language, String stdin) {
         if (user == null || user.getId() == null || !userAccountRepository.existsById(user.getId())) {
             throw new IllegalArgumentException("You must be logged in to submit a solution.");
         }
@@ -49,8 +58,19 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setCode(code.trim());
         submission.setLanguage(language.trim());
         submission.setStatus("PENDING");
+        submission.setStdin(stdin == null ? "" : stdin);
         submission.setSubmittedAt(LocalDateTime.now());
-        return submissionRepository.save(submission);
+        Submission saved = submissionRepository.save(submission);
+        var result = codeExecutionService.execute(saved.getCode(), saved.getLanguage(), saved.getStdin(),
+            saved.getProblem().getSampleOutput());
+        saved.setJudgeToken(result.token());
+        saved.setStatus(result.status());
+        saved.setStdout(result.stdout());
+        saved.setStderr(result.stderr());
+        saved.setCompileOutput(result.compileOutput());
+        saved.setExecutionTimeMs(result.executionTimeMs());
+        saved.setMemoryKb(result.memoryKb());
+        return submissionRepository.save(saved);
     }
 
     @Override

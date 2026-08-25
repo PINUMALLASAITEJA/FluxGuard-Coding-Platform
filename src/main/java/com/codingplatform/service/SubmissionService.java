@@ -9,6 +9,8 @@ public interface SubmissionService {
 
     Submission submitSolution(UserAccount user, Long problemId, String code, String language);
 
+    Submission submitSolution(UserAccount user, Long problemId, String code, String language, String stdin);
+
     List<Submission> getUserSubmissions(UserAccount user);
 
     Submission getSubmissionById(Long id, UserAccount user);

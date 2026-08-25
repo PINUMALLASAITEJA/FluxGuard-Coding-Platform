@@ -10,20 +10,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.codingplatform.model.Problem;
 import com.codingplatform.service.ProblemService;
+import com.codingplatform.service.ExercismImportService;
 
 @Controller
 public class ProblemController {
 
     private final ProblemService problemService;
+    private final ExercismImportService exercismImportService;
 
-    public ProblemController(ProblemService problemService) {
+    public ProblemController(ProblemService problemService, ExercismImportService exercismImportService) {
         this.problemService = problemService;
+        this.exercismImportService = exercismImportService;
     }
 
     @GetMapping("/problems")
     public String listProblems(Model model) {
         List<Problem> problems = problemService.getAllProblems();
         model.addAttribute("problems", problems);
+        return "problems";
+    }
+
+    @PostMapping("/problems/import-exercism")
+    public String importExercismProblems(Model model) {
+        try {
+            model.addAttribute("importMessage", "Imported " + exercismImportService.importProblems()
+                    + " Exercism problems.");
+        } catch (IllegalStateException exception) {
+            model.addAttribute("importMessage", exception.getMessage());
+        }
+        model.addAttribute("problems", problemService.getAllProblems());
         return "problems";
     }
 

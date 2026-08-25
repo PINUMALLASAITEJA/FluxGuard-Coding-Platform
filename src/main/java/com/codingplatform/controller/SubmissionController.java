@@ -28,6 +28,7 @@ public class SubmissionController {
                                  @RequestParam("problemId") Long problemId,
                                  @RequestParam("code") String code,
                                  @RequestParam("language") String language,
+                                 @RequestParam(value = "stdin", required = false, defaultValue = "") String stdin,
                                  Model model) {
         Object principal = authentication.getPrincipal();
         if (!(principal instanceof CustomUserDetails)) {
@@ -36,7 +37,7 @@ public class SubmissionController {
 
         UserAccount user = ((CustomUserDetails) principal).getUserAccount();
         try {
-            submissionService.submitSolution(user, problemId, code, language);
+            submissionService.submitSolution(user, problemId, code, language, stdin);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("problem", problemService.getProblemById(problemId));

@@ -9,6 +9,10 @@
 <div class="container">
     <h1>Problems</h1>
     <p><a th:href="@{/problems/new}">Create Problem</a> | <a th:href="@{/dashboard}">Dashboard</a></p>
+    <form th:action="@{/problems/import-exercism}" method="post">
+        <button type="submit">Import Exercism Problems</button>
+    </form>
+    <p th:if="${importMessage}" th:text="${importMessage}"></p>
     <div th:if="${problems.isEmpty()}">
         <p>No problems available yet.</p>
     </div>
@@ -19,6 +23,7 @@
                 <th>Title</th>
                 <th>Difficulty</th>
                 <th>Description</th>
+                <th>Source</th>
             </tr>
             </thead>
             <tbody>
@@ -26,6 +31,7 @@
                 <td><a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Title</a></td>
                 <td th:text="${problem.difficulty}">Difficulty</td>
                 <td th:text="${problem.description}">Description</td>
+                <td th:text="${problem.source ?: 'Local'}">Source</td>
                 <td><a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a>
                     <form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post" style="display:inline">
                         <button type="submit">Delete</button>
