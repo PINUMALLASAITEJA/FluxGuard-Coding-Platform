@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${problem.title} + ' | Problems'">Problem Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="navbar">
+    <div class="logo"><a th:href="@{/}"><span class="logo-blue">Flux</span>Code</a></div>
+    <nav><ul class="nav-links"><li><a th:href="@{/problems}">Problems</a></li><li><a th:href="@{/dashboard}">Dashboard</a></li></ul></nav>
+</header>
+<main class="container">
+    <p><a th:href="@{/problems}">Back to problems</a></p>
+    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <article>
+        <h1 th:text="${problem.title}">Problem title</h1>
+        <p><strong>Difficulty:</strong> <span th:text="${problem.difficulty}">Medium</span></p>
+        <h2>Description</h2>
+        <p th:text="${problem.description}">Problem description</p>
+        <h2>Input Format</h2>
+        <p th:text="${problem.inputFormat}">Input format</p>
+        <h2>Output Format</h2>
+        <p th:text="${problem.outputFormat}">Output format</p>
+    </article>
+    <section>
+        <h2>Submit Solution</h2>
+        <p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
+        <form th:action="@{/submit}" method="post">
+            <input type="hidden" name="problemId" th:value="${problem.id}">
+            <label for="language">Language</label>
+            <input id="language" name="language" type="text" placeholder="Java" required>
+            <label for="code">Code</label>
+            <textarea id="code" name="code" rows="14" required></textarea>
+            <button type="submit">Submit Solution</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -5,48 +5,49 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codingplatform.dto.DashboardView;
 import com.codingplatform.model.Submission;
 import com.codingplatform.model.UserAccount;
-import com.codingplatform.repository.SubmissionRepository;
 import com.codingplatform.security.CustomUserDetails;
 import com.codingplatform.service.DashboardService;
+import com.codingplatform.service.SubmissionService;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
 
-    private final SubmissionRepository submissionRepository;
+    private final SubmissionService submissionService;
 
-    public DashboardServiceImpl(SubmissionRepository submissionRepository) {
-        this.submissionRepository = submissionRepository;
+    public DashboardServiceImpl(SubmissionService submissionService) {
+        this.submissionService = submissionService;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DashboardView buildDashboardView(Authentication authentication) {
-        String userName = (authentication != null && authentication.getName() != null)
-                ? authentication.getName()
-                : "Guest";
+        String userName = "Guest";
 
         DashboardView view = new DashboardView();
         view.setUserName(userName);
         view.setGreeting("Welcome back, " + userName + "!");
         view.setHeroSubtitle("Track your coding progress and contests.");
         view.setCurrentRank("Unranked");
-        view.setActiveContestName("No active contest");
-        view.setActiveContestStartTime("");
-        view.setActiveContestDuration("");
+        view.setActiveContestName(null);
 
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
             UserAccount user = ((CustomUserDetails) authentication.getPrincipal()).getUserAccount();
-            int acceptedCount = submissionRepository.countByUserAndStatus(user, "ACCEPTED");
-            int submissionCount = submissionRepository.countByUser(user);
-            List<String> recentActivity = submissionRepository.findTop5ByUserOrderBySubmittedAtDesc(user)
+            userName = user.getFullName();
+            int solvedCount = submissionService.countSolvedProblems(user);
+            int submissionCount = submissionService.countUserSubmissions(user);
+            List<String> recentActivity = submissionService.getRecentSubmissions(user)
                     .stream()
                     .map(this::formatActivityEntry)
                     .collect(Collectors.toList());
 
-            view.setProblemsSolved(acceptedCount);
+            view.setUserName(userName);
+            view.setGreeting("Welcome back, " + userName + "!");
+            view.setProblemsSolved(solvedCount);
             view.setSubmissions(submissionCount);
             view.setRecentActivity(recentActivity.isEmpty()
                     ? List.of("No recent submissions yet.")
@@ -58,7 +59,7 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         view.setContestsJoined(0);
-        view.setUpcomingContests(List.of("No upcoming contests"));
+        view.setUpcomingContests(List.of());
         return view;
     }
 

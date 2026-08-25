@@ -7,7 +7,15 @@ import com.codingplatform.model.UserAccount;
 
 public interface SubmissionService {
 
-    Submission submit(Submission submission);
+    Submission submitSolution(UserAccount user, Long problemId, String code, String language);
 
-    List<Submission> getByUser(UserAccount user);
+    List<Submission> getUserSubmissions(UserAccount user);
+
+    Submission getSubmissionById(Long id, UserAccount user);
+
+    List<Submission> getRecentSubmissions(UserAccount user);
+
+    int countUserSubmissions(UserAccount user);
+
+    int countSolvedProblems(UserAccount user);
 }

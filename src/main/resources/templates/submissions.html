@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission History</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="navbar">
+    <div class="logo"><a th:href="@{/dashboard}"><span class="logo-blue">Flux</span>Code</a></div>
+    <nav><ul class="nav-links"><li><a th:href="@{/dashboard}">Dashboard</a></li><li><a th:href="@{/problems}">Problems</a></li></ul></nav>
+</header>
+<main class="container">
+    <h1>Submission History</h1>
+    <p th:if="${submissions.isEmpty()}">You have not submitted a solution yet.</p>
+    <table th:if="${!submissions.isEmpty()}">
+        <thead><tr><th>ID</th><th>Problem</th><th>Language</th><th>Status</th><th>Submitted</th></tr></thead>
+        <tbody>
+        <tr th:each="submission : ${submissions}">
+            <td th:text="${submission.id}">1</td>
+            <td th:text="${submission.problem.title}">Problem</td>
+            <td th:text="${submission.language}">Java</td>
+            <td th:text="${submission.status}">PENDING</td>
+            <td th:text="${submission.submittedAt}">2026-08-25T10:00</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

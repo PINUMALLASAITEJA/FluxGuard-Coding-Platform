@@ -8,5 +8,9 @@ public interface ProblemService {
 
     List<Problem> getAllProblems();
 
+    Problem getProblemById(Long id);
+
     Problem saveProblem(Problem problem);
+
+    void deleteProblem(Long id);
 }

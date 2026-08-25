@@ -25,8 +25,24 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Problem getProblemById(Long id) {
+        return problemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Problem not found."));
+    }
+
+    @Override
     @Transactional
     public Problem saveProblem(Problem problem) {
         return problemRepository.save(problem);
+    }
+
+    @Override
+    @Transactional
+    public void deleteProblem(Long id) {
+        if (!problemRepository.existsById(id)) {
+            throw new IllegalArgumentException("Problem not found.");
+        }
+        problemRepository.deleteById(id);
     }
 }

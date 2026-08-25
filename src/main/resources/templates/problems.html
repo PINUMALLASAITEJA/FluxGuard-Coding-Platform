@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Problems</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Problems</h1>
+    <p><a th:href="@{/problems/new}">Create Problem</a> | <a th:href="@{/dashboard}">Dashboard</a></p>
+    <div th:if="${problems.isEmpty()}">
+        <p>No problems available yet.</p>
+    </div>
+    <div th:if="${!problems.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Difficulty</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="problem : ${problems}">
+                <td><a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Title</a></td>
+                <td th:text="${problem.difficulty}">Difficulty</td>
+                <td th:text="${problem.description}">Description</td>
+                <td><a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a>
+                    <form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post" style="display:inline">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

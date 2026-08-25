@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         loginForm.addEventListener("submit", function (event) {
 
-            const email = document.querySelector("input[name='email']").value.trim();
+            const email = document.querySelector("input[name='username']").value.trim();
             const password = document.querySelector("input[name='password']").value.trim();
 
             if (email === "") {
