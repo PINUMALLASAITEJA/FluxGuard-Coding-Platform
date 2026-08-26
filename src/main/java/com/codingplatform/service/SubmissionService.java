@@ -19,5 +19,7 @@ public interface SubmissionService {
 
     int countUserSubmissions(UserAccount user);
 
+    int countAcceptedSubmissions(UserAccount user);
+
     int countSolvedProblems(UserAccount user);
 }

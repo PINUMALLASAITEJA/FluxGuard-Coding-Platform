@@ -3,46 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${problem.title} + ' | Problems'">Problem Details</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title th:text="${problem.title} + ' | FluxCode'">Problem Details</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/problems.css}">
 </head>
 <body>
-<header class="navbar">
-    <div class="logo"><a th:href="@{/}"><span class="logo-blue">Flux</span>Code</a></div>
-    <nav><ul class="nav-links"><li><a th:href="@{/problems}">Problems</a></li><li><a th:href="@{/dashboard}">Dashboard</a></li></ul></nav>
+<header class="navbar" role="banner">
+    <div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div>
+    <nav class="nav-links" aria-label="Primary navigation"><a th:href="@{/dashboard}">Dashboard</a><a th:href="@{/problems}" class="active">Problems</a><a th:href="@{/submissions}">Submissions</a><a th:href="@{/leaderboard}">Leaderboard</a><a th:href="@{/profile}">Profile</a><form th:action="@{/logout}" method="post" class="logout-form"><button type="submit" class="logout-btn">Logout</button></form></nav>
 </header>
-<main class="container">
-    <p><a th:href="@{/problems}">Back to problems</a></p>
-    <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
-    <article>
+<main class="problems-shell detail-layout" role="main">
+    <a class="back-link" th:href="@{/problems}">&larr; All problems</a>
+    <p class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <article class="problem-statement panel">
+        <div class="problem-card-top"><span class="difficulty-badge" th:classappend="${' difficulty-' + #strings.toLowerCase(problem.difficulty)}" th:text="${problem.difficulty}">Medium</span><span class="source-badge" th:text="${problem.source ?: 'Local'}">Exercism</span></div>
         <h1 th:text="${problem.title}">Problem title</h1>
-        <p><strong>Difficulty:</strong> <span th:text="${problem.difficulty}">Medium</span></p>
-        <p th:if="${problem.source}"><strong>Source:</strong> <a th:href="${problem.sourceUrl}" th:text="${problem.source}">Exercism</a></p>
-        <h2>Description</h2>
-        <p th:text="${problem.description}">Problem description</p>
-        <h2>Input Format</h2>
-        <p th:text="${problem.inputFormat}">Input format</p>
-        <h2>Output Format</h2>
-        <p th:text="${problem.outputFormat}">Output format</p>
-        <h2>Sample Input</h2>
-        <pre th:text="${problem.sampleInput ?: 'Use the sample input described above.'}">Sample input</pre>
-        <h2>Sample Output</h2>
-        <pre th:text="${problem.sampleOutput ?: 'See the exercise specification.'}">Sample output</pre>
+        <section><h2>Description</h2><p class="formatted-text" th:text="${problem.description}">Problem description</p></section>
+        <section><h2>Input Format</h2><p class="formatted-text" th:text="${problem.inputFormat ?: 'See the description for input details.'}">Input format</p></section>
+        <section><h2>Output Format</h2><p class="formatted-text" th:text="${problem.outputFormat ?: 'Print the required result.'}">Output format</p></section>
+        <section><h2>Examples</h2><div class="examples"><pre th:text="${problem.sampleInput ?: 'No sample input provided.'}">Sample input</pre><pre th:text="${problem.sampleOutput ?: 'No sample output provided.'}">Sample output</pre></div></section>
+        <section th:if="${problem.license}"><h2>Constraints</h2><p class="formatted-text" th:text="${problem.license}">Constraints</p></section>
+        <a class="primary-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Open code editor</a>
     </article>
-    <section>
-        <h2>Submit Solution</h2>
-        <p th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></p>
-        <form th:action="@{/submit}" method="post">
-            <input type="hidden" name="problemId" th:value="${problem.id}">
-            <label for="language">Language</label>
-            <input id="language" name="language" type="text" placeholder="Java" required>
-            <label for="code">Code</label>
-            <textarea id="code" name="code" rows="14" required></textarea>
-            <label for="stdin">Input</label>
-            <textarea id="stdin" name="stdin" rows="5" th:text="${problem.sampleInput}"></textarea>
-            <button type="submit">Submit Solution</button>
-        </form>
-    </section>
 </main>
 </body>
 </html>

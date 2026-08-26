@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.stream.Collectors;
 
 import com.codingplatform.model.UserAccount;
 import com.codingplatform.security.CustomUserDetails;
@@ -50,12 +51,19 @@ public class SubmissionController {
     }
 
     @GetMapping("/submissions")
-    public String submissionHistory(Authentication authentication, Model model) {
+    public String submissionHistory(Authentication authentication, @RequestParam(value = "problem", required = false) String problem,
+                                    @RequestParam(value = "verdict", required = false) String verdict, Model model) {
         UserAccount user = getAuthenticatedUser(authentication);
         if (user == null) {
             return "redirect:/login";
         }
-        model.addAttribute("submissions", submissionService.getUserSubmissions(user));
+        var submissions = submissionService.getUserSubmissions(user).stream()
+            .filter(submission -> problem == null || problem.isBlank() || submission.getProblem().getTitle().toLowerCase().contains(problem.toLowerCase()))
+            .filter(submission -> verdict == null || verdict.isBlank() || submission.getStatus().equalsIgnoreCase(verdict))
+            .collect(Collectors.toList());
+        model.addAttribute("submissions", submissions);
+        model.addAttribute("problemFilter", problem == null ? "" : problem);
+        model.addAttribute("verdictFilter", verdict == null ? "" : verdict);
         return "submissions";
     }
 

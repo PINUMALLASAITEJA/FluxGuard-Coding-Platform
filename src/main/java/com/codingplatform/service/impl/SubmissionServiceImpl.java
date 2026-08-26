@@ -100,6 +100,12 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     @Transactional(readOnly = true)
+    public int countAcceptedSubmissions(UserAccount user) {
+        return submissionRepository.countByUserAndStatus(user, "ACCEPTED");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public int countSolvedProblems(UserAccount user) {
         return submissionRepository.countDistinctProblemsByUserAndStatus(user, "ACCEPTED");
     }

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.codingplatform.model.Problem;
 import com.codingplatform.service.ProblemService;
 import com.codingplatform.service.ExercismImportService;
+import com.codingplatform.service.SubmissionService;
 
 @Controller
 public class ProblemController {
@@ -20,10 +21,13 @@ public class ProblemController {
     private static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
     private final ProblemService problemService;
     private final ExercismImportService exercismImportService;
+    private final SubmissionService submissionService;
 
-    public ProblemController(ProblemService problemService, ExercismImportService exercismImportService) {
+    public ProblemController(ProblemService problemService, ExercismImportService exercismImportService,
+                             SubmissionService submissionService) {
         this.problemService = problemService;
         this.exercismImportService = exercismImportService;
+        this.submissionService = submissionService;
     }
 
     @GetMapping("/problems")
@@ -57,6 +61,39 @@ public class ProblemController {
             model.addAttribute("errorMessage", exception.getMessage());
             return "redirect:/problems";
         }
+    }
+
+    @GetMapping("/problems/{id}/solve")
+    public String solveProblem(@PathVariable Long id, Model model) {
+        try {
+            model.addAttribute("problem", problemService.getProblemById(id));
+            model.addAttribute("selectedLanguage", "Java");
+            model.addAttribute("sourceCode", "");
+            model.addAttribute("stdin", "");
+            return "problem-solve";
+        } catch (IllegalArgumentException exception) {
+            return "redirect:/problems";
+        }
+    }
+
+    @PostMapping("/problems/{id}/solve")
+    public String executeSolution(@PathVariable Long id, String code, String language, String stdin,
+                                  Model model, org.springframework.security.core.Authentication authentication) {
+        try {
+            if (authentication == null || !(authentication.getPrincipal() instanceof com.codingplatform.security.CustomUserDetails details)) {
+                return "redirect:/login";
+            }
+            var submission = submissionService.submitSolution(details.getUserAccount(), id, code, language, stdin);
+            model.addAttribute("result", submission);
+            model.addAttribute("message", "Execution complete");
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+        }
+        model.addAttribute("problem", problemService.getProblemById(id));
+        model.addAttribute("selectedLanguage", language == null || language.isBlank() ? "Java" : language);
+        model.addAttribute("sourceCode", code == null ? "" : code);
+        model.addAttribute("stdin", stdin == null ? "" : stdin);
+        return "problem-solve";
     }
 
     @GetMapping("/problems/new")

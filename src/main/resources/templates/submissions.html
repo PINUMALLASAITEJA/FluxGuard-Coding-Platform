@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission History</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/problems.css}">
 </head>
 <body>
 <header class="navbar">
     <div class="logo"><a th:href="@{/dashboard}"><span class="logo-blue">Flux</span>Code</a></div>
     <nav><ul class="nav-links"><li><a th:href="@{/dashboard}">Dashboard</a></li><li><a th:href="@{/problems}">Problems</a></li></ul></nav>
 </header>
-<main class="container">
-    <h1>Submission History</h1>
+<main class="problems-shell">
+    <p class="eyebrow">Your work</p><h1>Submission History</h1>
+    <form class="problem-toolbar" method="get" th:action="@{/submissions}"><label class="search-field">Problem<input name="problem" type="search" placeholder="Filter by problem" th:value="${problemFilter}"></label><label class="search-field">Verdict<select name="verdict"><option value="">All verdicts</option><option th:selected="${verdictFilter == 'ACCEPTED'}">ACCEPTED</option><option th:selected="${verdictFilter == 'WRONG_ANSWER'}">WRONG_ANSWER</option><option th:selected="${verdictFilter == 'PENDING'}">PENDING</option></select></label><button class="primary-btn" type="submit">Filter</button></form>
     <p th:if="${submissions.isEmpty()}">You have not submitted a solution yet.</p>
     <table th:if="${!submissions.isEmpty()}">
         <thead><tr><th>ID</th><th>Problem</th><th>Language</th><th>Status</th><th>Output</th><th>Time</th><th>Memory</th><th>Submitted</th></tr></thead>

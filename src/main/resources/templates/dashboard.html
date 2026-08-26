@@ -50,6 +50,14 @@
                 <p th:text="${dashboardView.submissions}">0</p>
             </article>
             <article class="stat-card">
+                <h2>Accepted Solutions</h2>
+                <p th:text="${dashboardView.acceptedSolutions}">0</p>
+            </article>
+            <article class="stat-card">
+                <h2>Success Rate</h2>
+                <p th:text="${dashboardView.successRate + '%'}">0%</p>
+            </article>
+            <article class="stat-card">
                 <h2>Current Rank</h2>
                 <p th:text="${dashboardView.currentRank}">Unranked</p>
             </article>

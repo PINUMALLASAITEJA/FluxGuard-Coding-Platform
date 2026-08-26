@@ -76,6 +76,7 @@ public class Judge0CodeExecutionService implements CodeExecutionService {
             case "java" -> 62;
             case "c" -> 50;
             case "c++", "cpp" -> 54;
+            case "javascript", "js" -> 63;
             default -> null;
         };
     }

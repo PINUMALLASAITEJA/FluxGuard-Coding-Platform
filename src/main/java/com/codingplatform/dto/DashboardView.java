@@ -11,6 +11,8 @@ public class DashboardView {
     private int problemsSolved;
     private int contestsJoined;
     private int submissions;
+    private int acceptedSolutions;
+    private int successRate;
     private String currentRank;
 
     private String activeContestName;
@@ -67,6 +69,14 @@ public class DashboardView {
     public void setSubmissions(int submissions) {
         this.submissions = submissions;
     }
+
+    public int getAcceptedSolutions() { return acceptedSolutions; }
+
+    public void setAcceptedSolutions(int acceptedSolutions) { this.acceptedSolutions = acceptedSolutions; }
+
+    public int getSuccessRate() { return successRate; }
+
+    public void setSuccessRate(int successRate) { this.successRate = successRate; }
 
     public String getCurrentRank() {
         return currentRank;

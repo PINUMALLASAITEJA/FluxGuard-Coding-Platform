@@ -2,45 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Problems</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Problems | FluxCode</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/problems.css}">
 </head>
 <body>
-<div class="container">
-    <h1>Problems</h1>
-    <p><a th:href="@{/problems/new}">Create Problem</a> | <a th:href="@{/dashboard}">Dashboard</a></p>
-    <form th:action="@{/problems/import-exercism}" method="post">
-        <button type="submit">Import Exercism Problems</button>
-    </form>
-    <p th:if="${importMessage}" th:text="${importMessage}"></p>
-    <div th:if="${problems.isEmpty()}">
-        <p>No problems available yet.</p>
-    </div>
-    <div th:if="${!problems.isEmpty()}">
-        <table>
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Difficulty</th>
-                <th>Description</th>
-                <th>Source</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="problem : ${problems}">
-                <td><a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Title</a></td>
-                <td th:text="${problem.difficulty}">Difficulty</td>
-                <td th:text="${problem.description}">Description</td>
-                <td th:text="${problem.source ?: 'Local'}">Source</td>
-                <td><a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a>
-                    <form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post" style="display:inline">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<header class="navbar" role="banner">
+    <div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div>
+    <nav class="nav-links" aria-label="Primary navigation">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/contests}">Contests</a>
+        <a th:href="@{/problems}" class="active">Problems</a>
+        <a th:href="@{/submissions}">Submissions</a>
+        <a th:href="@{/leaderboard}">Leaderboard</a>
+        <a th:href="@{/profile}">Profile</a>
+        <form th:action="@{/logout}" method="post" class="logout-form"><button type="submit" class="logout-btn">Logout</button></form>
+    </nav>
+</header>
+<main class="problems-shell" role="main">
+    <section class="problems-heading">
+        <div>
+            <p class="eyebrow">Practice library</p>
+            <h1>Choose your next challenge</h1>
+            <p class="subtitle">Build momentum with focused problems from Exercism and beyond.</p>
+        </div>
+        <div class="heading-actions">
+            <a class="secondary-btn" th:href="@{/problems/new}">Create Problem</a>
+            <form th:action="@{/problems/import-exercism}" method="post"><button class="primary-btn" type="submit">Import Exercism</button></form>
+        </div>
+    </section>
+    <p class="notice" th:if="${importMessage}" th:text="${importMessage}"></p>
+    <section class="problem-toolbar" aria-label="Problem filters">
+        <label class="search-field" for="problem-search"><span>Search problems</span><input id="problem-search" type="search" placeholder="Search by title or description" autocomplete="off"></label>
+        <span class="problem-count" th:text="${problems.size() + ' problems'}">0 problems</span>
+    </section>
+    <section class="problem-grid" th:if="${!problems.isEmpty()}" aria-label="Problems">
+        <article class="problem-card" th:each="problem : ${problems}" th:attr="data-search=${problem.title + ' ' + problem.description}">
+            <div class="problem-card-top"><span class="difficulty-badge" th:classappend="${' difficulty-' + #strings.toLowerCase(problem.difficulty)}" th:text="${problem.difficulty}">Easy</span><span class="source-badge" th:text="${problem.source ?: 'Local'}">Exercism</span></div>
+            <h2 th:text="${problem.title}">Problem title</h2>
+            <p class="problem-preview" th:text="${problem.description ?: 'A new challenge is waiting for you.'}">Description preview</p>
+            <div class="problem-card-footer"><a class="solve-link" th:href="@{/problems/{id}(id=${problem.id})}">View problem <span aria-hidden="true">&rarr;</span></a><a class="primary-btn solve-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Solve</a></div>
+            <div class="admin-actions"><a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a><form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post"><button type="submit">Delete</button></form></div>
+        </article>
+    </section>
+    <section class="empty-state panel" th:if="${problems.isEmpty()}"><h2>No problems yet</h2><p>Import the Exercism library to start practicing.</p></section>
+</main>
+<script>
+    const search = document.getElementById('problem-search');
+    search?.addEventListener('input', () => document.querySelectorAll('.problem-card').forEach(card => card.hidden = !card.dataset.search.toLowerCase().includes(search.value.toLowerCase())));
+</script>
 </body>
 </html>

@@ -40,6 +40,7 @@ public class DashboardServiceImpl implements DashboardService {
             userName = user.getFullName();
             int solvedCount = submissionService.countSolvedProblems(user);
             int submissionCount = submissionService.countUserSubmissions(user);
+            int acceptedCount = submissionService.countAcceptedSubmissions(user);
             List<String> recentActivity = submissionService.getRecentSubmissions(user)
                     .stream()
                     .map(this::formatActivityEntry)
@@ -49,12 +50,16 @@ public class DashboardServiceImpl implements DashboardService {
             view.setGreeting("Welcome back, " + userName + "!");
             view.setProblemsSolved(solvedCount);
             view.setSubmissions(submissionCount);
+            view.setAcceptedSolutions(acceptedCount);
+            view.setSuccessRate(submissionCount == 0 ? 0 : acceptedCount * 100 / submissionCount);
             view.setRecentActivity(recentActivity.isEmpty()
                     ? List.of("No recent submissions yet.")
                     : recentActivity);
         } else {
             view.setProblemsSolved(0);
             view.setSubmissions(0);
+            view.setAcceptedSolutions(0);
+            view.setSuccessRate(0);
             view.setRecentActivity(List.of("Welcome to FluxGuard!", "Complete your first challenge."));
         }
 
