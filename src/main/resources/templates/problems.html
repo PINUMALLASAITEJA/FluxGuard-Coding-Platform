@@ -33,23 +33,66 @@
     </section>
     <p class="notice" th:if="${importMessage}" th:text="${importMessage}"></p>
     <section class="problem-toolbar" aria-label="Problem filters">
-        <label class="search-field" for="problem-search"><span>Search problems</span><input id="problem-search" type="search" placeholder="Search by title or description" autocomplete="off"></label>
+        <label class="search-field" for="problem-search"><span>Search problems</span><input id="problem-search" type="search" placeholder="Search by title or source" autocomplete="off"></label>
         <span class="problem-count" th:text="${problems.size() + ' problems'}">0 problems</span>
     </section>
     <section class="problem-grid" th:if="${!problems.isEmpty()}" aria-label="Problems">
-        <article class="problem-card" th:each="problem : ${problems}" th:attr="data-search=${problem.title + ' ' + problem.description}">
-            <div class="problem-card-top"><span class="difficulty-badge" th:classappend="${' difficulty-' + #strings.toLowerCase(problem.difficulty)}" th:text="${problem.difficulty}">Easy</span><span class="source-badge" th:text="${problem.source ?: 'Local'}">Exercism</span></div>
-            <h2 th:text="${problem.title}">Problem title</h2>
-            <p class="problem-preview" th:text="${problem.description ?: 'A new challenge is waiting for you.'}">Description preview</p>
-            <div class="problem-card-footer"><a class="solve-link" th:href="@{/problems/{id}(id=${problem.id})}">View problem <span aria-hidden="true">&rarr;</span></a><a class="primary-btn solve-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Solve</a></div>
-            <div class="admin-actions"><a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a><form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post"><button type="submit">Delete</button></form></div>
+        <article class="problem-card" th:each="problem : ${problems}"
+                 th:attr="data-search=${problem.title + ' ' + (problem.source ?: '')}, data-problem-id=${problem.id}"
+                 tabindex="0" role="button" th:aria-label="'Open problem details for ' + ${problem.title}">
+            <div class="problem-card-main">
+                <div class="problem-card-top">
+                    <div class="problem-card-badges">
+                        <span class="difficulty-badge" th:classappend="${' difficulty-' + #strings.toLowerCase(problem.difficulty)}" th:text="${problem.difficulty}">Easy</span>
+                        <span class="source-badge" th:text="${problem.source ?: 'Local'}">Exercism</span>
+                    </div>
+                    <a class="solve-link" th:href="@{/problems/{id}(id=${problem.id})}" aria-label="Open problem details">Solve</a>
+                </div>
+                <h2 th:text="${problem.title}">Problem title</h2>
+                <div class="problem-card-meta" aria-label="Problem metadata">
+                    <span class="meta-tag" th:if="${problem.source != null}" th:text="${problem.source}">Exercism</span>
+                    <span class="meta-tag" th:if="${problem.sourceId != null}" th:text="${problem.sourceId}">exercise</span>
+                </div>
+            </div>
+            <div class="problem-card-actions">
+                <a class="primary-btn solve-btn" th:href="@{/problems/{id}(id=${problem.id})}">Solve</a>
+            </div>
+            <div class="admin-actions">
+                <a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a>
+                <form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post"><button type="submit">Delete</button></form>
+            </div>
         </article>
     </section>
     <section class="empty-state panel" th:if="${problems.isEmpty()}"><h2>No problems yet</h2><p>Import the Exercism library to start practicing.</p></section>
 </main>
 <script>
     const search = document.getElementById('problem-search');
-    search?.addEventListener('input', () => document.querySelectorAll('.problem-card').forEach(card => card.hidden = !card.dataset.search.toLowerCase().includes(search.value.toLowerCase())));
+    const problemCards = document.querySelectorAll('.problem-card');
+
+    search?.addEventListener('input', () => {
+        const query = search.value.trim().toLowerCase();
+        problemCards.forEach(card => {
+            const haystack = (card.dataset.search || '').toLowerCase();
+            card.hidden = query.length > 0 && !haystack.includes(query);
+        });
+    });
+
+    problemCards.forEach(card => {
+        const openProblem = (event) => {
+            if (event.target.closest('a, button, form')) {
+                return;
+            }
+            window.location.href = '/problems/' + card.dataset.problemId;
+        };
+
+        card.addEventListener('click', openProblem);
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openProblem(event);
+            }
+        });
+    });
 </script>
 </body>
 </html>
