@@ -5,7 +5,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +110,33 @@ public class ExercismImportServiceImpl implements ExercismImportService {
     }
 
     private String titleFrom(String slug, String description) {
-        return description.lines().map(String::trim).filter(line -> line.startsWith("# ")).findFirst()
-                .map(line -> line.substring(2).trim()).orElseGet(() -> slug.replace('-', ' '));
+        String title = description.lines()
+                .map(String::trim)
+                .filter(line -> line.startsWith("# "))
+                .map(line -> line.substring(2).trim())
+                .filter(this::isMeaningfulTitle)
+                .findFirst()
+                .orElse(null);
+
+        if (title != null) {
+            return title;
+        }
+
+        return toDisplayTitle(slug);
+    }
+
+    private boolean isMeaningfulTitle(String value) {
+        String normalized = value.trim();
+        return !normalized.equalsIgnoreCase("Description")
+                && !normalized.equalsIgnoreCase("Instructions")
+                && !normalized.equalsIgnoreCase("Introduction")
+                && !normalized.isBlank();
+    }
+
+    private String toDisplayTitle(String slug) {
+        return Arrays.stream(slug.split("-"))
+                .filter(part -> !part.isBlank())
+                .map(part -> part.substring(0, 1).toUpperCase(Locale.ROOT) + part.substring(1))
+                .collect(Collectors.joining(" "));
     }
 }

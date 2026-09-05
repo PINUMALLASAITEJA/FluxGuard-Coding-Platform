@@ -30,4 +30,15 @@ class CodingPlatformApplicationTests {
 		assertTrue(problemRepository.findBySourceAndSourceId("EXERCISM", "hello-world").isPresent());
 	}
 
+	@Test
+	void importedExercismTitlesUseRealExerciseNames() {
+		exercismImportService.importProblems();
+		String title = problemRepository.findBySourceAndSourceId("EXERCISM", "hello-world")
+				.orElseThrow()
+				.getTitle();
+
+		assertTrue(title != null && !title.equalsIgnoreCase("Description") && !title.equalsIgnoreCase("Instructions"));
+		assertTrue(title.toLowerCase().contains("hello"));
+	}
+
 }
