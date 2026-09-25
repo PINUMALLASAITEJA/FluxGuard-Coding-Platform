@@ -91,9 +91,27 @@
 .admin-actions button { border: 0; padding: 0; color: inherit; background: none; cursor: pointer; font: inherit; }
 .empty-state { text-align: center; }
 .empty-state h2 { color: #0f172a; }
+.submissions-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 28px; }
+.submissions-heading h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 3.2rem); }
+.submission-count { color: #64748b; font-weight: 700; white-space: nowrap; }
+.submissions-toolbar { margin-top: 0; }
+.submissions-toolbar select { display: block; width: 100%; margin-top: 8px; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #0f172a; font-size: 1rem; }
+.submissions-table-wrap { overflow-x: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 10px rgba(15,23,42,.04); }
+.submissions-table { width: 100%; min-width: 720px; border-collapse: collapse; text-align: left; }
+.submissions-table th, .submissions-table td { padding: 16px 18px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+.submissions-table th { background: #f8fafc; color: #64748b; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.submissions-table tbody tr:last-child td { border-bottom: 0; }
+.submissions-table tbody tr:hover { background: #f8fbff; }
+.submission-status { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
+.status-accepted { background: #dcfce7; color: #166534; }
+.status-wrong_answer, .status-failed, .status-error { background: #fee2e2; color: #991b1b; }
+.status-pending, .status-running { background: #fef3c7; color: #92400e; }
+.submissions-empty { margin-top: 20px; padding: 48px 24px; }
+.submissions-empty p { color: #64748b; margin-bottom: 0; }
 @media (max-width: 640px) {
     .problems-shell { padding: 28px 20px 48px; }
     .problems-heading, .problem-toolbar { align-items: stretch; flex-direction: column; }
+    .submissions-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
     .heading-actions { flex-wrap: wrap; }
     .problem-card { align-items: flex-start; flex-direction: column; }
     .problem-card-main { width: 100%; }

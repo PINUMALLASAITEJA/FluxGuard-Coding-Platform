@@ -8,24 +8,7 @@
     <script th:src="@{/js/dashboard.js}" defer></script>
 </head>
 <body>
-    <header class="navbar" role="banner">
-        <div class="brand">
-            <a th:href="@{/dashboard}">Coding Platform</a>
-        </div>
-        <nav class="nav-links" aria-label="Primary navigation">
-            <a th:href="@{/dashboard}" class="active">Dashboard</a>
-            <a th:href="@{/contests}">Contests</a>
-            <a th:href="@{/problems}">Problems</a>
-            <a th:href="@{/submissions}">Submissions</a>
-            <a th:href="@{/leaderboard}">Leaderboard</a>
-            <a th:href="@{/profile}">Profile</a>
-            <a th:href="@{/fluxguard}">FluxGuard</a>
-            <span class="user-name" th:text="${dashboardView.userName}">User</span>
-            <form th:action="@{/logout}" method="post" class="logout-form">
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
-        </nav>
-    </header>
+    <div th:replace="~{fragments/navbar :: navbar('Dashboard')}"></div>
 
     <main class="dashboard-shell" th:if="${dashboardView != null}" role="main">
         <section class="welcome-banner" aria-labelledby="welcome-heading">

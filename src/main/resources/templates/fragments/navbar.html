@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="navbar" role="banner" th:fragment="navbar(activeItem)">
+    <div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div>
+    <nav class="nav-links" aria-label="Primary navigation">
+        <a th:href="@{/dashboard}" th:classappend="${activeItem == 'Dashboard' ? ' active' : ''}">Dashboard</a>
+        <a th:href="@{/contests}" th:classappend="${activeItem == 'Contests' ? ' active' : ''}">Contests</a>
+        <a th:href="@{/problems}" th:classappend="${activeItem == 'Problems' ? ' active' : ''}">Problems</a>
+        <a th:href="@{/submissions}" th:classappend="${activeItem == 'Submissions' ? ' active' : ''}">Submissions</a>
+        <a th:href="@{/leaderboard}" th:classappend="${activeItem == 'Leaderboard' ? ' active' : ''}">Leaderboard</a>
+        <a th:href="@{/profile}" th:classappend="${activeItem == 'Profile' ? ' active' : ''}">Profile</a>
+        <a th:href="@{/fluxguard}" th:classappend="${activeItem == 'FluxGuard' ? ' active' : ''}">FluxGuard</a>
+        <span class="user-name" th:text="${currentUserName}">User</span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </nav>
+</header>
+</body>
+</html>

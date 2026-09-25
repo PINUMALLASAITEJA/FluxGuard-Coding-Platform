@@ -8,29 +8,41 @@
     <link rel="stylesheet" th:href="@{/css/problems.css}">
 </head>
 <body>
-<header class="navbar">
-    <div class="logo"><a th:href="@{/dashboard}"><span class="logo-blue">Flux</span>Code</a></div>
-    <nav><ul class="nav-links"><li><a th:href="@{/dashboard}">Dashboard</a></li><li><a th:href="@{/problems}">Problems</a></li></ul></nav>
-</header>
-<main class="problems-shell">
-    <p class="eyebrow">Your work</p><h1>Submission History</h1>
-    <form class="problem-toolbar" method="get" th:action="@{/submissions}"><label class="search-field">Problem<input name="problem" type="search" placeholder="Filter by problem" th:value="${problemFilter}"></label><label class="search-field">Verdict<select name="verdict"><option value="">All verdicts</option><option th:selected="${verdictFilter == 'ACCEPTED'}">ACCEPTED</option><option th:selected="${verdictFilter == 'WRONG_ANSWER'}">WRONG_ANSWER</option><option th:selected="${verdictFilter == 'PENDING'}">PENDING</option></select></label><button class="primary-btn" type="submit">Filter</button></form>
-    <p th:if="${submissions.isEmpty()}">You have not submitted a solution yet.</p>
-    <table th:if="${!submissions.isEmpty()}">
-        <thead><tr><th>ID</th><th>Problem</th><th>Language</th><th>Status</th><th>Output</th><th>Time</th><th>Memory</th><th>Submitted</th></tr></thead>
-        <tbody>
-        <tr th:each="submission : ${submissions}">
-            <td th:text="${submission.id}">1</td>
-            <td th:text="${submission.problem.title}">Problem</td>
-            <td th:text="${submission.language}">Java</td>
-            <td th:text="${submission.status}">PENDING</td>
-            <td th:text="${submission.stdout ?: submission.stderr ?: submission.compileOutput ?: '-'}">-</td>
-            <td th:text="${submission.executionTimeMs != null ? submission.executionTimeMs + ' ms' : '-'}">-</td>
-            <td th:text="${submission.memoryKb != null ? submission.memoryKb + ' KB' : '-'}">-</td>
-            <td th:text="${submission.submittedAt}">2026-08-25T10:00</td>
-        </tr>
-        </tbody>
-    </table>
+<div th:replace="~{fragments/navbar :: navbar('Submissions')}"></div>
+<main class="problems-shell submissions-shell">
+    <section class="submissions-heading">
+        <div>
+            <p class="eyebrow">Your work</p>
+            <h1>Submission History</h1>
+            <p class="subtitle">Review your attempts, verdicts, and execution results.</p>
+        </div>
+        <span class="submission-count" th:text="${submissions.size() + ' submissions'}">0 submissions</span>
+    </section>
+    <form class="problem-toolbar submissions-toolbar" method="get" th:action="@{/submissions}">
+        <label class="search-field">Problem<input name="problem" type="search" placeholder="Filter by problem" th:value="${problemFilter}"></label>
+        <label class="search-field">Verdict<select name="verdict"><option value="">All verdicts</option><option th:selected="${verdictFilter == 'ACCEPTED'}">ACCEPTED</option><option th:selected="${verdictFilter == 'WRONG_ANSWER'}">WRONG_ANSWER</option><option th:selected="${verdictFilter == 'PENDING'}">PENDING</option></select></label>
+        <button class="primary-btn" type="submit">Filter</button>
+    </form>
+    <section class="empty-state panel submissions-empty" th:if="${submissions.isEmpty()}">
+        <h2>No submissions found</h2>
+        <p th:if="${problemFilter != '' or verdictFilter != ''}">Try clearing your filters or submit a solution to see it here.</p>
+        <p th:unless="${problemFilter != '' or verdictFilter != ''}">Your submitted solutions will appear here with their verdict and performance details.</p>
+    </section>
+    <div class="submissions-table-wrap" th:if="${!submissions.isEmpty()}">
+        <table class="submissions-table">
+            <thead><tr><th>Problem</th><th>Language</th><th>Verdict</th><th>Submitted</th><th>Runtime</th><th>Memory</th></tr></thead>
+            <tbody>
+            <tr th:each="submission : ${submissions}">
+                <td><strong th:text="${submission.problem.title}">Problem</strong></td>
+                <td th:text="${submission.language}">Java</td>
+                <td><span class="submission-status" th:classappend="${' status-' + #strings.toLowerCase(submission.status)}" th:text="${submission.status}">PENDING</span></td>
+                <td th:text="${submission.submittedAt != null ? #temporals.format(submission.submittedAt, 'MMM d, yyyy HH:mm') : '-'}">Aug 25, 2026 10:00</td>
+                <td th:text="${submission.executionTimeMs != null ? submission.executionTimeMs + ' ms' : '-'}">-</td>
+                <td th:text="${submission.memoryKb != null ? submission.memoryKb + ' KB' : '-'}">-</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 </body>
 </html>

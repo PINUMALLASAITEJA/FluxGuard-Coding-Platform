@@ -7,18 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/problems.css}">
 </head>
 <body>
-<header class="navbar" role="banner">
-    <div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div>
-    <nav class="nav-links" aria-label="Primary navigation">
-        <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/contests}">Contests</a>
-        <a th:href="@{/problems}" class="active">Problems</a>
-        <a th:href="@{/submissions}">Submissions</a>
-        <a th:href="@{/leaderboard}">Leaderboard</a>
-        <a th:href="@{/profile}">Profile</a>
-        <form th:action="@{/logout}" method="post" class="logout-form"><button type="submit" class="logout-btn">Logout</button></form>
-    </nav>
-</header>
+<div th:replace="~{fragments/navbar :: navbar('Problems')}"></div>
 <main class="problems-shell" role="main">
     <section class="problems-heading">
         <div>

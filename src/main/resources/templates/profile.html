@@ -1,1 +1,28 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Profile | FluxCode</title><link rel="stylesheet" th:href="@{/css/dashboard.css}"><link rel="stylesheet" th:href="@{/css/problems.css}"></head><body><header class="navbar"><div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div><nav class="nav-links"><a th:href="@{/dashboard}">Dashboard</a><a th:href="@{/problems}">Problems</a><a th:href="@{/submissions}">Submissions</a><a th:href="@{/leaderboard}">Leaderboard</a><a class="active" th:href="@{/profile}">Profile</a><form th:action="@{/logout}" method="post" class="logout-form"><button class="logout-btn">Logout</button></form></nav></header><main class="problems-shell"><p class="eyebrow">Your account</p><h1 th:text="${user.fullName}">User</h1><p th:text="${user.email}">email</p><section class="stats-grid"><article class="stat-card"><h2>Problems Solved</h2><p th:text="${solvedCount}">0</p></article><article class="stat-card"><h2>Submissions</h2><p th:text="${submissionCount}">0</p></article><article class="stat-card"><h2>Accepted</h2><p th:text="${acceptedCount}">0</p></article></section><section class="panel"><h2>Recent submission history</h2><p class="empty-state" th:if="${submissions.isEmpty()}">No submissions yet.</p><ul class="list" th:if="${!submissions.isEmpty()}"><li th:each="submission : ${submissions}" th:text="${submission.problem.title + ' - ' + submission.status}">Problem - ACCEPTED</li></ul></section></main></body></html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Profile | FluxCode</title>
+	<link rel="stylesheet" th:href="@{/css/dashboard.css}">
+	<link rel="stylesheet" th:href="@{/css/problems.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar('Profile')}"></div>
+<main class="problems-shell">
+	<p class="eyebrow">Your account</p>
+	<h1 th:text="${user.fullName}">User</h1>
+	<p th:text="${user.email}">email</p>
+	<section class="stats-grid">
+		<article class="stat-card"><h2>Problems Solved</h2><p th:text="${solvedCount}">0</p></article>
+		<article class="stat-card"><h2>Submissions</h2><p th:text="${submissionCount}">0</p></article>
+		<article class="stat-card"><h2>Accepted</h2><p th:text="${acceptedCount}">0</p></article>
+	</section>
+	<section class="panel">
+		<h2>Recent submission history</h2>
+		<p class="empty-state" th:if="${submissions.isEmpty()}">No submissions yet.</p>
+		<ul class="list" th:if="${!submissions.isEmpty()}"><li th:each="submission : ${submissions}" th:text="${submission.problem.title + ' - ' + submission.status}">Problem - ACCEPTED</li></ul>
+	</section>
+</main>
+</body>
+</html>

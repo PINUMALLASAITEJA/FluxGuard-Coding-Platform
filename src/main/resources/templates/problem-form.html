@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Problem Form</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: navbar('Problems')}"></div>
 <main class="container">
     <p><a th:href="@{/problems}">Back to problems</a></p>
     <h1 th:text="${problem.id == null ? 'Create Problem' : 'Edit Problem'}">Create Problem</h1>

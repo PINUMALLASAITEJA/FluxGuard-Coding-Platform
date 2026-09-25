@@ -1,1 +1,25 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Leaderboard | FluxCode</title><link rel="stylesheet" th:href="@{/css/dashboard.css}"><link rel="stylesheet" th:href="@{/css/problems.css}"></head><body><header class="navbar"><div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div><nav class="nav-links"><a th:href="@{/dashboard}">Dashboard</a><a th:href="@{/problems}">Problems</a><a th:href="@{/submissions}">Submissions</a><a class="active" th:href="@{/leaderboard}">Leaderboard</a><a th:href="@{/profile}">Profile</a></nav></header><main class="problems-shell"><p class="eyebrow">Community</p><h1>Leaderboard</h1><section class="problem-grid"><article class="problem-card" th:each="entry, stat : ${entries}"><div class="problem-card-top"><span class="source-badge" th:text="${'#' + (stat.index + 1)}">#1</span><span class="difficulty-badge" th:text="${entry.acceptedProblems + ' solved'}">0 solved</span></div><h2 th:text="${entry.user.fullName}">User</h2><p class="problem-preview" th:text="${entry.acceptedSubmissions + ' accepted submissions'}">0 accepted submissions</p></article></section><p class="empty-state panel" th:if="${entries.isEmpty()}">No rankings yet.</p></main></body></html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Leaderboard | FluxCode</title>
+	<link rel="stylesheet" th:href="@{/css/dashboard.css}">
+	<link rel="stylesheet" th:href="@{/css/problems.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar('Leaderboard')}"></div>
+<main class="problems-shell">
+	<p class="eyebrow">Community</p>
+	<h1>Leaderboard</h1>
+	<section class="problem-grid">
+		<article class="problem-card" th:each="entry, stat : ${entries}">
+			<div class="problem-card-top"><span class="source-badge" th:text="${'#' + (stat.index + 1)}">#1</span><span class="difficulty-badge" th:text="${entry.acceptedProblems + ' solved'}">0 solved</span></div>
+			<h2 th:text="${entry.user.fullName}">User</h2>
+			<p class="problem-preview" th:text="${entry.acceptedSubmissions + ' accepted submissions'}">0 accepted submissions</p>
+		</article>
+	</section>
+	<p class="empty-state panel" th:if="${entries.isEmpty()}">No rankings yet.</p>
+</main>
+</body>
+</html>
