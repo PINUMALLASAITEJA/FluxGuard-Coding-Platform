@@ -56,6 +56,15 @@ public class FluxGuardRequestLog {
     @Column(name = "operating_system")
     private String operatingSystem;
 
+    @Column(name = "failure_reason")
+    private String failureReason;
+
+    @Column(name = "event_type")
+    private String eventType;
+
+    @Column(name = "instance_id")
+    private String instanceId;
+
     public FluxGuardRequestLog() {
         this.timestamp = LocalDateTime.now();
     }
@@ -170,5 +179,29 @@ public class FluxGuardRequestLog {
 
     public void setOperatingSystem(String operatingSystem) {
         this.operatingSystem = operatingSystem;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
 }

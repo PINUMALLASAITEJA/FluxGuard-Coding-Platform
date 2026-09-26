@@ -153,9 +153,28 @@
             border: 1px solid rgba(148, 163, 184, 0.12);
             color: #e2e8f0;
         }
+        .stat-card, .panel { border-radius: 8px; }
+        .stat-card.failed { border-color: rgba(248, 113, 113, .45); }
+        .failed-link { display: block; color: inherit; text-decoration: none; }
+        .failed-link:focus-visible { outline: 2px solid #fca5a5; outline-offset: 4px; }
+        .status-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-bottom: 18px; }
+        .status-good { color: #86efac; }
+        .status-alert { color: #fca5a5; }
+        .traffic-bars { display: grid; gap: 12px; }
+        .traffic-row { display: grid; grid-template-columns: minmax(95px, 150px) minmax(40px, 1fr) auto; gap: 12px; align-items: center; }
+        .traffic-track { height: 10px; background: rgba(148, 163, 184, .18); border-radius: 8px; overflow: hidden; }
+        .traffic-fill { height: 100%; background: #38bdf8; }
+        .failure-table-wrap { overflow-x: auto; }
+        .failure-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; }
+        .failure-table th, .failure-table td { padding: 11px 9px; border-bottom: 1px solid rgba(148, 163, 184, .14); vertical-align: top; }
+        .failure-table th { color: #94a3b8; font-size: .72rem; text-transform: uppercase; }
+        .failure-table details summary { cursor: pointer; color: #e2e8f0; }
+        .failure-detail { margin-top: 8px; color: #cbd5e1; }
+        .quiet { color: #94a3b8; }
         @media (max-width: 980px) {
             .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .content-grid { grid-template-columns: 1fr; }
+            .status-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 640px) {
             .fluxguard-shell { padding: 24px 16px 52px; }
@@ -170,115 +189,101 @@
 <main class="fluxguard-shell" th:if="${dashboard != null}">
     <section class="fluxguard-top">
         <div>
-            <p class="eyebrow">Security Center</p>
+            <p class="eyebrow" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM d, yyyy')}">Today's Security Monitor</p>
             <h1>FluxGuard</h1>
         </div>
-        <div class="score-pill" th:text="'Security Score: ' + ${dashboard.securityScore} + '/100'">Security Score: 92/100</div>
+        <span class="chip">Today's traffic only</span>
     </section>
 
     <section class="stats-grid" aria-label="FluxGuard metrics">
-        <article class="stat-card">
-            <h2>Total Requests</h2>
-            <p th:text="${dashboard.totalRequests}">0</p>
-        </article>
         <article class="stat-card">
             <h2>Today's Requests</h2>
             <p th:text="${dashboard.todayRequests}">0</p>
         </article>
         <article class="stat-card">
-            <h2>Successful</h2>
+            <h2>Successful Requests</h2>
             <p th:text="${dashboard.successfulRequests}">0</p>
         </article>
+        <article class="stat-card failed">
+            <a class="failed-link" href="#failed-details" aria-label="View today's failed request details">
+                <h2>Failed Requests</h2>
+                <p th:text="${dashboard.failedRequests}">0</p>
+            </a>
+        </article>
         <article class="stat-card">
-            <h2>Failed</h2>
-            <p th:text="${dashboard.failedRequests}">0</p>
+            <h2>Current Users</h2>
+            <p th:text="${dashboard.currentUsers}">0</p>
         </article>
     </section>
 
-    <section class="content-grid">
+    <section class="status-grid">
         <article class="panel">
             <div class="panel-header">
-                <h2>Current Session</h2>
-                <span class="chip">Live</span>
+                <h2>Security Status</h2>
+                <span class="chip" th:classappend="${dashboard.failedRequests > 0 ? 'status-alert' : 'status-good'}"
+                      th:text="${dashboard.failedRequests > 0 ? 'Review required' : 'Monitoring'}">Monitoring</span>
             </div>
-            <ul class="meta-list">
-                <li><span>Username</span><strong th:text="${dashboard.username}">User</strong></li>
-                <li><span>Current IP</span><strong th:text="${dashboard.currentIp}">0.0.0.0</strong></li>
-                <li><span>Browser</span><strong th:text="${dashboard.browser}">Unknown</strong></li>
-                <li><span>Operating System</span><strong th:text="${dashboard.operatingSystem}">Unknown</strong></li>
-                <li><span>Login Time</span><strong th:text="${dashboard.loginTime}">—</strong></li>
-                <li><span>Session Duration</span><strong th:text="${dashboard.sessionDuration}">—</strong></li>
-            </ul>
+            <p th:text="${dashboard.failedRequests > 0 ? dashboard.failedRequests + ' failed request(s) recorded today.' : 'No failed requests recorded today.'}">No failed requests recorded today.</p>
         </article>
-
         <article class="panel">
             <div class="panel-header">
-                <h2>Recent Activity</h2>
-                <span class="chip" th:text="'Last ' + ${#lists.size(dashboard.recentActivity)}">Last 20</span>
+                <h2>Load Balancing Status</h2>
+                <span class="chip" th:classappend="${dashboard.heavyTraffic ? 'status-alert' : ''}"
+                      th:text="${dashboard.heavyTraffic ? 'ACTIVE' : 'Standby'}">Standby</span>
             </div>
-            <ul class="activity-list" th:if="${!#lists.isEmpty(dashboard.recentActivity)}">
-                <li th:each="log : ${dashboard.recentActivity}">
-                    <strong th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm')}">time</strong>
-                    <span th:text="${log.endpoint}">/dashboard</span>
-                    <span th:text="${log.httpMethod}">GET</span>
-                    <span th:text="${log.responseStatus}">200</span>
-                    <span th:text="${log.responseTimeMs + 'ms'}">12ms</span>
-                </li>
-            </ul>
-            <p th:if="${#lists.isEmpty(dashboard.recentActivity)}">No recent activity recorded.</p>
+            <p th:if="${dashboard.heavyTraffic}" class="status-alert">LoadBalancing applied because of Heavy Web-Traffic</p>
+            <p th:unless="${dashboard.heavyTraffic}" class="quiet"
+               th:text="'Heavy traffic threshold: ' + ${dashboard.heavyTrafficThreshold} + ' concurrent users'">Heavy traffic threshold: 50 concurrent users</p>
         </article>
     </section>
 
-    <section class="content-grid">
-        <article class="panel">
-            <div class="panel-header">
-                <h2>Statistics</h2>
+    <section class="panel" style="margin-bottom:18px">
+        <div class="panel-header">
+            <h2>Traffic by Backend Instance</h2>
+            <span class="quiet" th:text="${dashboard.currentUsers + ' active users'}">0 active users</span>
+        </div>
+        <div class="traffic-bars" th:if="${!#lists.isEmpty(dashboard.instanceTraffic)}">
+            <div class="traffic-row" th:each="instance : ${dashboard.instanceTraffic}">
+                <strong th:text="${instance.instanceId}">Backend 1</strong>
+                <div class="traffic-track" role="img" th:aria-label="${instance.sharePercent + '% of observed users'}">
+                    <div class="traffic-fill" th:style="'width:' + ${instance.sharePercent} + '%' "></div>
+                </div>
+                <span th:text="${instance.activeUsers + ' users'}">0 users</span>
             </div>
-            <ul class="meta-list">
-                <li><span>Average Response Time</span><strong th:text="${dashboard.averageResponseTime + 'ms'}">0ms</strong></li>
-                <li><span>Most Visited Endpoint</span><strong th:text="${dashboard.mostVisitedEndpoint}">N/A</strong></li>
-                <li><span>Successful Requests</span><strong th:text="${dashboard.successfulRequests}">0</strong></li>
-                <li><span>Failed Requests</span><strong th:text="${dashboard.failedRequests}">0</strong></li>
-            </ul>
-        </article>
-
-        <article class="panel">
-            <div class="panel-header">
-                <h2>Security Events</h2>
-            </div>
-            <ul class="table-list" th:if="${!#lists.isEmpty(dashboard.securityEvents)}">
-                <li th:each="event : ${dashboard.securityEvents}"><strong th:text="${event}">No active alerts.</strong></li>
-            </ul>
-            <div class="alert-box" th:if="${!#lists.isEmpty(dashboard.securityEvents)}">Monitoring active</div>
-            <p th:if="${#lists.isEmpty(dashboard.securityEvents)}">No security events recorded yet.</p>
-        </article>
+        </div>
+        <p class="quiet" th:if="${#lists.isEmpty(dashboard.instanceTraffic)}">Backend instance telemetry is not available yet.</p>
     </section>
 
-    <section class="content-grid">
-        <article class="panel">
+    <section class="panel" id="failed-details">
             <div class="panel-header">
-                <h2>Devices</h2>
+                <h2>Failed Request Details</h2>
+                <span class="chip" th:text="${dashboard.failedRequests + ' today'}">0 today</span>
             </div>
-            <div class="device-list" th:if="${!#lists.isEmpty(dashboard.devices)}">
-                <div class="device-item" th:each="device : ${dashboard.devices}" th:text="${device}">Chrome | macOS | 127.0.0.1</div>
-            </div>
-            <p th:if="${#lists.isEmpty(dashboard.devices)}">No device history yet.</p>
-        </article>
-
-        <article class="panel">
-            <div class="panel-header">
-                <h2>Login History</h2>
-            </div>
-            <ul class="activity-list" th:if="${!#lists.isEmpty(dashboard.loginHistory)}">
-                <li th:each="log : ${dashboard.loginHistory}">
-                    <span th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm')}">time</span>
-                    <span th:text="${log.endpoint}">/login</span>
-                    <span th:text="${log.ipAddress}">127.0.0.1</span>
-                    <span th:text="${log.browser}">Chrome</span>
-                </li>
-            </ul>
-            <p th:if="${#lists.isEmpty(dashboard.loginHistory)}">No login history available.</p>
-        </article>
+        <div class="failure-table-wrap" th:if="${!#lists.isEmpty(dashboard.failedRequestDetails)}">
+            <table class="failure-table">
+                <thead><tr><th>Time</th><th>Method</th><th>Endpoint</th><th>Status / Details</th><th>User / IP</th></tr></thead>
+                <tbody>
+                <tr th:each="failure : ${dashboard.failedRequestDetails}">
+                    <td th:text="${#temporals.format(failure.timestamp, 'HH:mm:ss')}">00:00:00</td>
+                    <td th:text="${failure.httpMethod}">POST</td>
+                    <td th:text="${failure.endpoint}">/submit</td>
+                    <td>
+                        <details>
+                            <summary th:text="${failure.responseStatus + ' - ' + (failure.failureReason == null ? 'Request failed' : failure.failureReason)}">403 - Suspicious request detected</summary>
+                            <div class="failure-detail">
+                                <div th:text="'Timestamp: ' + ${#temporals.format(failure.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</div>
+                                <div th:text="'Failure reason: ' + ${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Failure reason</div>
+                                <div th:text="'Request: ' + ${failure.httpMethod} + ' ' + ${failure.endpoint}">Request</div>
+                                <div th:text="'HTTP status: ' + ${failure.responseStatus}">HTTP status</div>
+                            </div>
+                        </details>
+                    </td>
+                    <td th:text="${failure.username != null ? failure.username : failure.ipAddress}">127.0.0.1</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="quiet" th:if="${#lists.isEmpty(dashboard.failedRequestDetails)}">No failed requests recorded today.</p>
     </section>
 </main>
 </body>

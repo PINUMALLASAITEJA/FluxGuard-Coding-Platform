@@ -24,6 +24,11 @@ public class FluxGuardDashboardView {
     private List<String> securityEvents = new ArrayList<>();
     private List<String> devices = new ArrayList<>();
     private List<FluxGuardRequestLog> loginHistory = new ArrayList<>();
+    private long currentUsers;
+    private int heavyTrafficThreshold;
+    private boolean heavyTraffic;
+    private List<FluxGuardRequestLog> failedRequestDetails = List.of();
+    private List<InstanceTraffic> instanceTraffic = List.of();
 
     public String getUsername() {
         return username;
@@ -159,5 +164,48 @@ public class FluxGuardDashboardView {
 
     public void setLoginHistory(List<FluxGuardRequestLog> loginHistory) {
         this.loginHistory = loginHistory;
+    }
+
+    public long getCurrentUsers() {
+        return currentUsers;
+    }
+
+    public void setCurrentUsers(long currentUsers) {
+        this.currentUsers = currentUsers;
+    }
+
+    public int getHeavyTrafficThreshold() {
+        return heavyTrafficThreshold;
+    }
+
+    public void setHeavyTrafficThreshold(int heavyTrafficThreshold) {
+        this.heavyTrafficThreshold = heavyTrafficThreshold;
+    }
+
+    public boolean isHeavyTraffic() {
+        return heavyTraffic;
+    }
+
+    public void setHeavyTraffic(boolean heavyTraffic) {
+        this.heavyTraffic = heavyTraffic;
+    }
+
+    public List<FluxGuardRequestLog> getFailedRequestDetails() {
+        return failedRequestDetails;
+    }
+
+    public void setFailedRequestDetails(List<FluxGuardRequestLog> failedRequestDetails) {
+        this.failedRequestDetails = failedRequestDetails;
+    }
+
+    public List<InstanceTraffic> getInstanceTraffic() {
+        return instanceTraffic;
+    }
+
+    public void setInstanceTraffic(List<InstanceTraffic> instanceTraffic) {
+        this.instanceTraffic = instanceTraffic;
+    }
+
+    public record InstanceTraffic(String instanceId, long activeUsers, int sharePercent) {
     }
 }
