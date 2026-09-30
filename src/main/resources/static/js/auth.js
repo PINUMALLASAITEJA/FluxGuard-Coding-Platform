@@ -42,7 +42,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (response.status === 403) {
-                    alert("Action Denied!");
+                    const notification = document.createElement("div");
+                    notification.className = "security-toast";
+                    notification.setAttribute("role", "alert");
+                    notification.setAttribute("aria-live", "assertive");
+
+                    const icon = document.createElement("span");
+                    icon.className = "security-toast-icon";
+                    icon.setAttribute("aria-hidden", "true");
+                    icon.textContent = "!";
+
+                    const message = document.createElement("span");
+                    message.textContent = "Action Denied!";
+                    notification.append(icon, message);
+                    document.body.append(notification);
+
+                    window.setTimeout(function () {
+                        notification.classList.add("security-toast-dismiss");
+                        window.setTimeout(function () {
+                            notification.remove();
+                        }, 200);
+                    }, 4000);
                     return;
                 }
 
