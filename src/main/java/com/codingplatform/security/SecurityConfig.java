@@ -65,7 +65,11 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                                fluxGuardLoggingService.recordAuthenticationEvent(request, HttpServletResponse.SC_OK,
+                                        "Logout", authentication);
+                                response.sendRedirect("/");
+                        })
                         .permitAll()
                 );
 

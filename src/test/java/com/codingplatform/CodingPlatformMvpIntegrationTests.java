@@ -197,6 +197,33 @@ class CodingPlatformMvpIntegrationTests {
                 org.junit.jupiter.api.Assertions.assertTrue(fluxGuardRequestLogRepository.existsById(savedLogs.get(0).getId()));
             }
 
+            @Test
+            void staticResourceFailuresAreIgnoredFromMeaningfulFailureMetrics() {
+                LocalDateTime today = LocalDateTime.now().toLocalDate().atStartOfDay();
+                LocalDateTime tomorrow = today.plusDays(1);
+
+                FluxGuardRequestLog faviconFailure = failedRequest(today.plusHours(1));
+                faviconFailure.setEndpoint("/favicon.ico");
+                faviconFailure.setResponseStatus(404);
+                faviconFailure.setFailureReason("Not Found");
+
+                FluxGuardRequestLog loginFailure = failedRequest(today.plusHours(2));
+                loginFailure.setEndpoint("/login");
+                loginFailure.setHttpMethod("POST");
+                loginFailure.setResponseStatus(401);
+                loginFailure.setFailureReason("Invalid credentials");
+                loginFailure.setEventType("AUTHENTICATION");
+
+                fluxGuardRequestLogRepository.saveAll(List.of(faviconFailure, loginFailure));
+
+                var meaningfulFailures = fluxGuardRequestLogRepository.findTop100MeaningfulFailuresBetween(today, tomorrow);
+                org.junit.jupiter.api.Assertions.assertTrue(meaningfulFailures.stream()
+                        .anyMatch(log -> "/login".equals(log.getEndpoint())
+                                && "Invalid credentials".equals(log.getFailureReason())));
+                org.junit.jupiter.api.Assertions.assertTrue(meaningfulFailures.stream()
+                        .noneMatch(log -> "/favicon.ico".equals(log.getEndpoint())));
+            }
+
             private FluxGuardRequestLog failedRequest(LocalDateTime timestamp) {
                 FluxGuardRequestLog log = new FluxGuardRequestLog();
                 log.setTimestamp(timestamp);

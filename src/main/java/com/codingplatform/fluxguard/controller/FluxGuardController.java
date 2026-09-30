@@ -39,9 +39,7 @@ public class FluxGuardController {
         LocalDateTime startOfTomorrow = startOfDay.plusDays(1);
         LocalDateTime activeSince = LocalDateTime.now().minus(5, ChronoUnit.MINUTES);
         long currentUsers = requestLogRepository.countActiveSessionsSince(activeSince);
-        List<FluxGuardRequestLog> failures = requestLogRepository
-            .findTop100ByTimestampGreaterThanEqualAndTimestampLessThanAndResponseStatusGreaterThanEqualOrderByTimestampDesc(
-                startOfDay, startOfTomorrow, 400);
+        List<FluxGuardRequestLog> failures = requestLogRepository.findTop100MeaningfulFailuresBetween(startOfDay, startOfTomorrow, 400);
         List<FluxGuardDashboardView.InstanceTraffic> distribution = requestLogRepository
             .findInstanceUserCountsSince(activeSince).stream()
             .map(item -> new FluxGuardDashboardView.InstanceTraffic(item.getInstanceId(), item.getActiveUsers(),
@@ -49,18 +47,17 @@ public class FluxGuardController {
             .collect(Collectors.toList());
 
         FluxGuardDashboardView view = new FluxGuardDashboardView();
-        view.setTodayRequests(requestLogRepository.countByTimestampGreaterThanEqualAndTimestampLessThan(startOfDay, startOfTomorrow));
-        view.setSuccessfulRequests(requestLogRepository.countByTimestampGreaterThanEqualAndTimestampLessThanAndResponseStatusBetween(
-            startOfDay, startOfTomorrow, 200, 399));
-        view.setFailedRequests(requestLogRepository.countByTimestampGreaterThanEqualAndTimestampLessThanAndResponseStatusGreaterThanEqual(
-            startOfDay, startOfTomorrow, 400));
+        view.setTodayRequests(requestLogRepository.countRelevantRequestsBetween(startOfDay, startOfTomorrow));
+        view.setSuccessfulRequests(requestLogRepository.countRelevantSuccessfulRequestsBetween(startOfDay, startOfTomorrow, 200, 399));
+        view.setFailedRequests(requestLogRepository.countMeaningfulFailedRequestsBetween(startOfDay, startOfTomorrow, 400));
         view.setCurrentUsers(currentUsers);
         view.setHeavyTrafficThreshold(heavyTrafficThreshold);
-        view.setHeavyTraffic(currentUsers > heavyTrafficThreshold);
+        view.setHeavyTraffic(currentUsers >= heavyTrafficThreshold);
         view.setFailedRequestDetails(failures);
         view.setInstanceTraffic(distribution);
-        view.setSecurityEvents(view.getFailedRequests() == 0 ? List.of("No active security alerts.")
-            : List.of(view.getFailedRequests() + " failed request(s) recorded today."));
+        view.setSecurityEvents(view.getFailedRequests() == 0
+            ? List.of("Monitoring active")
+            : List.of(view.getFailedRequests() + " failed requests recorded today"));
         model.addAttribute("dashboard", view);
         return "fluxguard";
     }

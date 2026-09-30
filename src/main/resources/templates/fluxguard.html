@@ -9,177 +9,136 @@
         body {
             background: linear-gradient(135deg, #06131f 0%, #0b1726 100%);
             color: #e2e8f0;
+            margin: 0;
+            font-family: Inter, "Segoe UI", sans-serif;
         }
-        .navbar {
-            background: rgba(10, 17, 29, 0.86);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.28);
-            backdrop-filter: blur(10px);
-        }
+        .navbar { background: rgba(10, 17, 29, 0.82); border-bottom: 1px solid rgba(59, 130, 246, 0.24); }
         .fluxguard-shell {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px 80px;
+            padding: 28px 20px 60px;
         }
         .fluxguard-top {
             display: flex;
             justify-content: space-between;
-            gap: 20px;
-            align-items: end;
-            margin-bottom: 24px;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 20px;
         }
         .eyebrow {
             margin: 0 0 8px;
             color: #7dd3fc;
-            font-size: .8rem;
-            font-weight: 700;
-            letter-spacing: .15em;
+            font-size: 0.74rem;
             text-transform: uppercase;
-        }
-        .fluxguard-top h1 {
-            margin: 0;
-            font-size: clamp(2rem, 4vw, 3rem);
-            color: #f8fafc;
-        }
-        .score-pill {
-            background: rgba(16, 185, 129, 0.14);
-            color: #a7f3d0;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            border-radius: 999px;
-            padding: 8px 14px;
-            font-size: .85rem;
+            letter-spacing: 0.12em;
             font-weight: 700;
         }
+        .fluxguard-top h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.6rem); color: #f8fafc; }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(15, 23, 42, 0.8);
+            color: #dbeafe;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .chip.status-good { color: #86efac; border-color: rgba(34, 197, 94, 0.38); background: rgba(34, 197, 94, 0.08); }
+        .chip.status-alert { color: #fca5a5; border-color: rgba(248, 113, 113, 0.38); background: rgba(248, 113, 113, 0.08); }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 18px;
-            margin-bottom: 24px;
+            gap: 16px;
+            margin-bottom: 18px;
         }
         .stat-card, .panel {
             background: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(148, 163, 184, 0.16);
-            border-radius: 18px;
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
-        }
-        .stat-card {
-            padding: 18px 20px;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 12px;
+            padding: 18px 18px 16px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
         }
         .stat-card h2 {
-            font-size: .8rem;
-            letter-spacing: .08em;
+            margin: 0 0 12px;
+            font-size: 0.76rem;
             text-transform: uppercase;
+            letter-spacing: 0.08em;
             color: #94a3b8;
-            margin: 0 0 14px;
         }
         .stat-card p {
-            font-size: 2rem;
-            font-weight: 800;
             margin: 0;
+            font-size: clamp(1.7rem, 3vw, 2.2rem);
+            font-weight: 800;
             color: #f8fafc;
         }
-        .content-grid {
+        .stat-card.failed { border-color: rgba(248, 113, 113, 0.3); }
+        .failed-link { color: inherit; text-decoration: none; display: block; }
+        .failed-link:focus-visible { outline: 2px solid #fda4af; outline-offset: 4px; border-radius: 10px; }
+        .status-grid {
             display: grid;
-            grid-template-columns: 1.1fr 1.5fr;
-            gap: 18px;
-            margin-bottom: 24px;
-        }
-        .panel {
-            padding: 20px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
         }
         .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-        }
-        .panel-header h2 {
-            margin: 0;
-            font-size: 1.05rem;
-            color: #f8fafc;
-        }
-        .meta-list, .activity-list, .table-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .meta-list li {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-            color: #cbd5e1;
-        }
-        .meta-list li:last-child { border-bottom: none; }
-        .meta-list span:first-child { color: #94a3b8; }
-        .activity-list li, .table-list li {
-            display: flex;
-            justify-content: space-between;
             gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-            color: #e2e8f0;
+            margin-bottom: 10px;
         }
-        .table-list li strong { color: #f8fafc; }
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: .7rem;
-            font-weight: 700;
-            border: 1px solid rgba(59, 130, 246, 0.35);
-            background: rgba(59, 130, 246, 0.12);
-            color: #bfdbfe;
-        }
-        .alert-box {
-            margin-top: 16px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #fcd34d;
-            font-weight: 600;
-        }
-        .device-list {
+        .panel-header h2 { margin: 0; color: #f8fafc; font-size: 1rem; }
+        .panel p { margin: 0; color: #cbd5e1; line-height: 1.5; }
+        .quiet { color: #94a3b8; }
+        .server-stack {
             display: grid;
-            gap: 10px;
+            gap: 8px;
             margin-top: 12px;
         }
-        .device-item {
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: rgba(15, 23, 42, 0.75);
+        .server-item {
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(148, 163, 184, 0.12);
             color: #e2e8f0;
         }
-        .stat-card, .panel { border-radius: 8px; }
-        .stat-card.failed { border-color: rgba(248, 113, 113, .45); }
-        .failed-link { display: block; color: inherit; text-decoration: none; }
-        .failed-link:focus-visible { outline: 2px solid #fca5a5; outline-offset: 4px; }
-        .status-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-bottom: 18px; }
-        .status-good { color: #86efac; }
-        .status-alert { color: #fca5a5; }
-        .traffic-bars { display: grid; gap: 12px; }
-        .traffic-row { display: grid; grid-template-columns: minmax(95px, 150px) minmax(40px, 1fr) auto; gap: 12px; align-items: center; }
-        .traffic-track { height: 10px; background: rgba(148, 163, 184, .18); border-radius: 8px; overflow: hidden; }
-        .traffic-fill { height: 100%; background: #38bdf8; }
         .failure-table-wrap { overflow-x: auto; }
-        .failure-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; }
-        .failure-table th, .failure-table td { padding: 11px 9px; border-bottom: 1px solid rgba(148, 163, 184, .14); vertical-align: top; }
-        .failure-table th { color: #94a3b8; font-size: .72rem; text-transform: uppercase; }
-        .failure-table details summary { cursor: pointer; color: #e2e8f0; }
-        .failure-detail { margin-top: 8px; color: #cbd5e1; }
-        .quiet { color: #94a3b8; }
-        @media (max-width: 980px) {
-            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .content-grid { grid-template-columns: 1fr; }
-            .status-grid { grid-template-columns: 1fr; }
+        .failure-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 700px;
         }
-        @media (max-width: 640px) {
-            .fluxguard-shell { padding: 24px 16px 52px; }
+        .failure-table th, .failure-table td {
+            text-align: left;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            vertical-align: top;
+        }
+        .failure-table th {
+            color: #94a3b8;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .failure-table details summary {
+            cursor: pointer;
+            color: #f8fafc;
+        }
+        .failure-detail {
+            margin-top: 8px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        @media (max-width: 980px) {
+            .stats-grid, .status-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 700px) {
+            .fluxguard-shell { padding: 22px 14px 50px; }
             .fluxguard-top { flex-direction: column; align-items: flex-start; }
-            .stats-grid { grid-template-columns: 1fr; }
+            .stats-grid, .status-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -192,7 +151,7 @@
             <p class="eyebrow" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM d, yyyy')}">Today's Security Monitor</p>
             <h1>FluxGuard</h1>
         </div>
-        <span class="chip">Today's traffic only</span>
+        <span class="chip">Today's view</span>
     </section>
 
     <section class="stats-grid" aria-label="FluxGuard metrics">
@@ -205,7 +164,7 @@
             <p th:text="${dashboard.successfulRequests}">0</p>
         </article>
         <article class="stat-card failed">
-            <a class="failed-link" href="#failed-details" aria-label="View today's failed request details">
+            <a class="failed-link" href="#failed-details" aria-label="View today's failed requests">
                 <h2>Failed Requests</h2>
                 <p th:text="${dashboard.failedRequests}">0</p>
             </a>
@@ -221,68 +180,68 @@
             <div class="panel-header">
                 <h2>Security Status</h2>
                 <span class="chip" th:classappend="${dashboard.failedRequests > 0 ? 'status-alert' : 'status-good'}"
-                      th:text="${dashboard.failedRequests > 0 ? 'Review required' : 'Monitoring'}">Monitoring</span>
+                      th:text="${dashboard.failedRequests > 0 ? 'Monitoring Active' : 'Monitoring Active'}">Monitoring Active</span>
             </div>
-            <p th:text="${dashboard.failedRequests > 0 ? dashboard.failedRequests + ' failed request(s) recorded today.' : 'No failed requests recorded today.'}">No failed requests recorded today.</p>
+            <p th:text="${dashboard.failedRequests > 0 ? dashboard.failedRequests + ' failed requests recorded today.' : 'No failed requests recorded today.'}">No failed requests recorded today.</p>
         </article>
+
         <article class="panel">
             <div class="panel-header">
                 <h2>Load Balancing Status</h2>
-                <span class="chip" th:classappend="${dashboard.heavyTraffic ? 'status-alert' : ''}"
-                      th:text="${dashboard.heavyTraffic ? 'ACTIVE' : 'Standby'}">Standby</span>
+                <span class="chip" th:classappend="${dashboard.heavyTraffic ? 'status-alert' : 'status-good'}"
+                      th:text="${dashboard.heavyTraffic ? 'Active' : 'Inactive'}">Inactive</span>
             </div>
-            <p th:if="${dashboard.heavyTraffic}" class="status-alert">LoadBalancing applied because of Heavy Web-Traffic</p>
-            <p th:unless="${dashboard.heavyTraffic}" class="quiet"
-               th:text="'Heavy traffic threshold: ' + ${dashboard.heavyTrafficThreshold} + ' concurrent users'">Heavy traffic threshold: 50 concurrent users</p>
+            <div th:if="${dashboard.heavyTraffic}" class="server-stack">
+                <div class="server-item" th:each="instance : ${dashboard.instanceTraffic}"
+                     th:text="${instance.instanceId + ' → ' + instance.activeUsers + ' users'}">Server 1 → 0 users</div>
+                <p class="quiet" th:if="${#lists.isEmpty(dashboard.instanceTraffic)}">No backend instance telemetry available yet.</p>
+            </div>
+            <p class="quiet" th:unless="${dashboard.heavyTraffic}">No heavy-traffic load balancing detected.</p>
         </article>
     </section>
 
-    <section class="panel" style="margin-bottom:18px">
+    <section class="panel" id="failed-details" style="margin-top: 0;">
         <div class="panel-header">
-            <h2>Traffic by Backend Instance</h2>
-            <span class="quiet" th:text="${dashboard.currentUsers + ' active users'}">0 active users</span>
+            <h2>Failed Request Details</h2>
+            <span class="chip" th:text="${dashboard.failedRequests + ' today'}">0 today</span>
         </div>
-        <div class="traffic-bars" th:if="${!#lists.isEmpty(dashboard.instanceTraffic)}">
-            <div class="traffic-row" th:each="instance : ${dashboard.instanceTraffic}">
-                <strong th:text="${instance.instanceId}">Backend 1</strong>
-                <div class="traffic-track" role="img" th:aria-label="${instance.sharePercent + '% of observed users'}">
-                    <div class="traffic-fill" th:style="'width:' + ${instance.sharePercent} + '%' "></div>
-                </div>
-                <span th:text="${instance.activeUsers + ' users'}">0 users</span>
-            </div>
-        </div>
-        <p class="quiet" th:if="${#lists.isEmpty(dashboard.instanceTraffic)}">Backend instance telemetry is not available yet.</p>
-    </section>
 
-    <section class="panel" id="failed-details">
-            <div class="panel-header">
-                <h2>Failed Request Details</h2>
-                <span class="chip" th:text="${dashboard.failedRequests + ' today'}">0 today</span>
-            </div>
         <div class="failure-table-wrap" th:if="${!#lists.isEmpty(dashboard.failedRequestDetails)}">
             <table class="failure-table">
-                <thead><tr><th>Time</th><th>Method</th><th>Endpoint</th><th>Status / Details</th><th>User / IP</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Status</th>
+                        <th>Failure reason</th>
+                        <th>User / IP</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr th:each="failure : ${dashboard.failedRequestDetails}">
-                    <td th:text="${#temporals.format(failure.timestamp, 'HH:mm:ss')}">00:00:00</td>
-                    <td th:text="${failure.httpMethod}">POST</td>
-                    <td th:text="${failure.endpoint}">/submit</td>
-                    <td>
-                        <details>
-                            <summary th:text="${failure.responseStatus + ' - ' + (failure.failureReason == null ? 'Request failed' : failure.failureReason)}">403 - Suspicious request detected</summary>
-                            <div class="failure-detail">
-                                <div th:text="'Timestamp: ' + ${#temporals.format(failure.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</div>
-                                <div th:text="'Failure reason: ' + ${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Failure reason</div>
-                                <div th:text="'Request: ' + ${failure.httpMethod} + ' ' + ${failure.endpoint}">Request</div>
-                                <div th:text="'HTTP status: ' + ${failure.responseStatus}">HTTP status</div>
-                            </div>
-                        </details>
-                    </td>
-                    <td th:text="${failure.username != null ? failure.username : failure.ipAddress}">127.0.0.1</td>
-                </tr>
+                    <tr th:each="failure : ${dashboard.failedRequestDetails}">
+                        <td th:text="${#temporals.format(failure.timestamp, 'HH:mm:ss')}">00:00:00</td>
+                        <td th:text="${failure.httpMethod}">POST</td>
+                        <td th:text="${failure.endpoint}">/login</td>
+                        <td th:text="${failure.responseStatus}">403</td>
+                        <td>
+                            <details>
+                                <summary th:text="${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Invalid credentials</summary>
+                                <div class="failure-detail">
+                                    <div th:text="'Timestamp: ' + ${#temporals.format(failure.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</div>
+                                    <div th:text="'HTTP method: ' + ${failure.httpMethod}">HTTP method</div>
+                                    <div th:text="'Endpoint: ' + ${failure.endpoint}">Endpoint</div>
+                                    <div th:text="'HTTP status: ' + ${failure.responseStatus}">HTTP status</div>
+                                    <div th:text="'Failure reason: ' + ${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Failure reason</div>
+                                </div>
+                            </details>
+                        </td>
+                        <td th:text="${failure.username != null ? failure.username : failure.ipAddress}">127.0.0.1</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+
         <p class="quiet" th:if="${#lists.isEmpty(dashboard.failedRequestDetails)}">No failed requests recorded today.</p>
     </section>
 </main>
