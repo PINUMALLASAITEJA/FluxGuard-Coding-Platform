@@ -146,6 +146,14 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(redirectedUrl("/"));
     }
 
+    @Test
+    void loginUsernameInputDoesNotUseHtmlEmailValidation() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("type=\"text\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("type=\"email\""))));
+    }
+
         @Test
         void suspiciousLoginIsDeniedWithoutStoringCredentials() throws Exception {
                 mockMvc.perform(post("/login")

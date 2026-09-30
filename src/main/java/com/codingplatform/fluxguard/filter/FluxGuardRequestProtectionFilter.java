@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -24,10 +25,10 @@ import com.codingplatform.fluxguard.service.RequestDeduplicationStore;
 public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
 
     private static final Duration DUPLICATE_WINDOW = Duration.ofSeconds(3);
-    private static final Pattern AUTH_BYPASS = Pattern.compile(
-            "['\\\"]\\s*(?:or|and)\\s+['\\\"]?[^\\s'\\\"]+['\\\"]?\\s*=\\s*['\\\"]?[^\\s'\\\"]+['\\\"]?",
-            Pattern.CASE_INSENSITIVE);
-    private static final Pattern UNION_SELECT = Pattern.compile("\\bunion\\s+(?:all\\s+)?select\\b", Pattern.CASE_INSENSITIVE);
+                private static final Pattern SQLI_AUTH_BYPASS = Pattern.compile(
+                    "(?i)(?:\\b(?:or|and)\\b\\s+(?:\\d+|[a-z0-9_.-]+|['\\\"][^'\\\"]+['\\\"])\\s*(?:=|!=|<>|<|>|like)\\s*(?:\\d+|[a-z0-9_.-]+|['\\\"][^'\\\"]+['\\\"])|"
+                        + "\\bunion\\b\\s+(?:all\\s+)?\\bselect\\b|"
+                        + "(?:--|/\\*|;\\s*(?:drop|delete|update|insert|alter)\\b))");
 
     private final FluxGuardLoggingService loggingService;
     private final RequestDeduplicationStore deduplicationStore;
@@ -67,7 +68,34 @@ public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
     }
 
     private boolean isSuspiciousLogin(String username) {
-        return username != null && (AUTH_BYPASS.matcher(username).find() || UNION_SELECT.matcher(username).find());
+        if (username == null) {
+            return false;
+        }
+
+        String normalized = username.replaceAll("\\s+", " ").trim();
+        String lower = normalized.toLowerCase(Locale.ROOT);
+
+        if (lower.contains("union select") || lower.contains("union all select")) {
+            return true;
+        }
+
+        if (lower.contains("or 1=1") || lower.contains("and 1=1")
+            || lower.contains("or '1'='1") || lower.contains("and '1'='1")) {
+            return true;
+        }
+
+        if ((lower.contains("' or ") || lower.contains("\" or ") || lower.contains("' and ") || lower.contains("\" and "))
+                && (lower.contains("=") || lower.contains(" like "))) {
+            return true;
+        }
+
+        if (lower.contains("--") || lower.contains("/*") || lower.contains(";drop ")
+                || lower.contains(";delete ") || lower.contains(";update ")
+                || lower.contains(";insert ") || lower.contains(";alter ")) {
+            return true;
+        }
+
+        return SQLI_AUTH_BYPASS.matcher(normalized).find();
     }
 
     private boolean isProtectedAction(HttpServletRequest request) {
