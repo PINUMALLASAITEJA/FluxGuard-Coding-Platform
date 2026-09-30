@@ -1,21 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<header class="navbar" role="banner" th:fragment="navbar(activeItem)">
-    <div class="brand"><a th:href="@{/dashboard}">FluxCode</a></div>
-    <nav class="nav-links" aria-label="Primary navigation">
-        <a th:href="@{/dashboard}" th:classappend="${activeItem == 'Dashboard' ? ' active' : ''}">Dashboard</a>
-        <a th:href="@{/contests}" th:classappend="${activeItem == 'Contests' ? ' active' : ''}">Contests</a>
-        <a th:href="@{/problems}" th:classappend="${activeItem == 'Problems' ? ' active' : ''}">Problems</a>
-        <a th:href="@{/submissions}" th:classappend="${activeItem == 'Submissions' ? ' active' : ''}">Submissions</a>
-        <a th:href="@{/leaderboard}" th:classappend="${activeItem == 'Leaderboard' ? ' active' : ''}">Leaderboard</a>
-        <a th:href="@{/profile}" th:classappend="${activeItem == 'Profile' ? ' active' : ''}">Profile</a>
-        <a th:href="@{/fluxguard}" th:classappend="${activeItem == 'FluxGuard' ? ' active' : ''}">FluxGuard</a>
-        <span class="user-name" th:text="${currentUserName}">User</span>
-        <form th:action="@{/logout}" method="post" class="logout-form">
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
+<th:block th:fragment="navbar(activeItem)">
+<aside class="app-sidebar" role="complementary" aria-label="Application navigation">
+    <div class="sidebar-brand-row">
+        <a class="sidebar-brand" th:href="@{/dashboard}" aria-label="FluxCode dashboard"><span class="brand-mark">F</span><span>FluxCode</span></a>
+        <button class="sidebar-close" type="button" aria-label="Close navigation" aria-expanded="false">×</button>
+    </div>
+    <p class="sidebar-label">Workspace</p>
+    <nav class="sidebar-nav" aria-label="Primary navigation">
+        <a th:href="@{/dashboard}" th:classappend="${activeItem == 'Dashboard' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Dashboard' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span>
+        </a>
+        <a th:href="@{/contests}" th:classappend="${activeItem == 'Contests' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Contests' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg><span>Contests</span>
+        </a>
+        <a th:href="@{/problems}" th:classappend="${activeItem == 'Problems' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Problems' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg><span>Problems</span>
+        </a>
+        <a th:href="@{/submissions}" th:classappend="${activeItem == 'Submissions' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Submissions' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h12M8 12h12M8 19h12M4 5h.01M4 12h.01M4 19h.01"/></svg><span>Submissions</span>
+        </a>
+        <a th:href="@{/leaderboard}" th:classappend="${activeItem == 'Leaderboard' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Leaderboard' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v7a5 5 0 0 1-10 0V4ZM7 7H4v2a4 4 0 0 0 4 4M17 7h3v2a4 4 0 0 1-4 4"/></svg><span>Leaderboard</span>
+        </a>
+        <a th:href="@{/profile}" th:classappend="${activeItem == 'Profile' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'Profile' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profile</span>
+        </a>
+        <a th:href="@{/fluxguard}" th:classappend="${activeItem == 'FluxGuard' ? ' active' : ''}" th:attr="aria-current=${activeItem == 'FluxGuard' ? 'page' : null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>FluxGuard</span>
+        </a>
     </nav>
-</header>
+    <div class="sidebar-user">
+        <a class="user-profile-link" th:href="@{/profile}" aria-label="View profile">
+            <span class="user-avatar" th:text="${#strings.isEmpty(currentUserName) ? 'U' : #strings.substring(currentUserName, 0, 1)}">U</span>
+            <span class="user-copy"><strong class="user-name" th:text="${currentUserName}">User</strong><small>Account</small></span>
+        </a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M21 4v16"/></svg><span>Sign out</span></button>
+        </form>
+    </div>
+    </aside>
+    <button class="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+    <button class="sidebar-menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.querySelector('.app-sidebar');
+            const toggles = document.querySelectorAll('.sidebar-menu-toggle, .sidebar-close, .sidebar-backdrop');
+            const setOpen = (open) => {
+                document.body.classList.toggle('sidebar-open', open);
+                document.querySelector('.sidebar-menu-toggle')?.setAttribute('aria-expanded', String(open));
+                sidebar?.querySelector('.sidebar-close')?.setAttribute('aria-expanded', String(open));
+            };
+            toggles?.forEach((toggle) => toggle.addEventListener('click', () => setOpen(!document.body.classList.contains('sidebar-open'))));
+            sidebar?.querySelectorAll('.sidebar-nav a, .user-profile-link').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+        });
+    </script>
+</th:block>
 </body>
 </html>

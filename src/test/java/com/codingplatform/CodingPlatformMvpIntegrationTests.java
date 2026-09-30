@@ -71,6 +71,18 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(view().name("problem-detail"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Two integers")));
 
+        mockMvc.perform(get("/problems").session((org.springframework.mock.web.MockHttpSession) session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/problems/" + problem.getId() + "/solve")));
+
+        mockMvc.perform(get("/problems/" + problem.getId() + "/solve")
+                        .session((org.springframework.mock.web.MockHttpSession) session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("problem-solve"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("class=\"solve-layout\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("public class Main")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Input format")));
+
         mockMvc.perform(post("/problems/update/" + problem.getId())
                         .session((org.springframework.mock.web.MockHttpSession) session)
                         .param("title", "Updated MVP Problem")

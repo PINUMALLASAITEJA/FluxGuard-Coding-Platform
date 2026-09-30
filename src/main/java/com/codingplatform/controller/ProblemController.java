@@ -68,7 +68,7 @@ public class ProblemController {
         try {
             model.addAttribute("problem", problemService.getProblemById(id));
             model.addAttribute("selectedLanguage", "Java");
-            model.addAttribute("sourceCode", "");
+            model.addAttribute("sourceCode", "public class Main {\n    public static void main(String[] args) {\n        // Read input and print your solution here\n    }\n}");
             model.addAttribute("stdin", "");
             return "problem-solve";
         } catch (IllegalArgumentException exception) {

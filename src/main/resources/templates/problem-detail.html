@@ -6,6 +6,7 @@
     <title th:text="${problem.title} + ' | FluxCode'">Problem Details</title>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/problems.css}">
+    <link rel="stylesheet" th:href="@{/css/platform.css}">
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar('Problems')}"></div>
@@ -20,7 +21,7 @@
         <section><h2>Output Format</h2><p class="formatted-text" th:text="${problem.outputFormat ?: 'Print the required result.'}">Output format</p></section>
         <section><h2>Examples</h2><div class="examples"><pre th:text="${problem.sampleInput ?: 'No sample input provided.'}">Sample input</pre><pre th:text="${problem.sampleOutput ?: 'No sample output provided.'}">Sample output</pre></div></section>
         <section th:if="${problem.license}"><h2>Constraints</h2><p class="formatted-text" th:text="${problem.license}">Constraints</p></section>
-        <a class="primary-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Open code editor</a>
+        <a class="primary-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Solve problem</a>
     </article>
 </main>
 </body>

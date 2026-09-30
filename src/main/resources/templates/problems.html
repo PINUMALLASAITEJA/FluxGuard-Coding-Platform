@@ -5,6 +5,7 @@
     <title>Problems | FluxCode</title>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/problems.css}">
+    <link rel="stylesheet" th:href="@{/css/platform.css}">
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar('Problems')}"></div>
@@ -38,7 +39,7 @@
                 </div>
                 <p class="problem-summary" th:text="${problem.description != null ? #strings.abbreviate(#strings.replace(problem.description, '\n', ' '), 110) : 'Practice challenge'}">Practice challenge</p>
             </div>
-            <a class="primary-btn solve-btn" th:href="@{/problems/{id}(id=${problem.id})}">Solve <span aria-hidden="true">→</span></a>
+            <a class="primary-btn solve-btn" th:href="@{/problems/{id}/solve(id=${problem.id})}">Solve <span aria-hidden="true">→</span></a>
             <div class="admin-actions">
                 <a th:href="@{/problems/edit/{id}(id=${problem.id})}">Edit</a>
                 <form th:action="@{/problems/delete/{id}(id=${problem.id})}" method="post"><button type="submit">Delete</button></form>
@@ -64,7 +65,7 @@
             if (event.target.closest('a, button, form')) {
                 return;
             }
-            window.location.href = '/problems/' + card.dataset.problemId;
+            window.location.href = '/problems/' + card.dataset.problemId + '/solve';
         };
 
         card.addEventListener('click', openProblem);
