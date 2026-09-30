@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const message = document.createElement("span");
                     message.textContent = "Action Denied!";
                     notification.append(icon, message);
-                    document.body.append(notification);
+                    loginForm.querySelector(".login-btn").insertAdjacentElement("afterend", notification);
 
                     window.setTimeout(function () {
                         notification.classList.add("security-toast-dismiss");
