@@ -87,6 +87,14 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(view().name("problem-detail"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Please enter your solution code.")));
 
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime startOfTomorrow = startOfDay.plusDays(1);
+        long requestsBeforeBurst = fluxGuardRequestLogRepository.countRelevantRequestsBetween(startOfDay, startOfTomorrow);
+        long successfulBeforeBurst = fluxGuardRequestLogRepository
+                .countRelevantSuccessfulRequestsBetween(startOfDay, startOfTomorrow, 200, 399);
+        long failedBeforeBurst = fluxGuardRequestLogRepository
+                .countMeaningfulFailedRequestsBetween(startOfDay, startOfTomorrow, 400);
+
         mockMvc.perform(post("/submit")
                         .session((org.springframework.mock.web.MockHttpSession) session)
                         .param("problemId", problem.getId().toString())
@@ -95,15 +103,26 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/problems"));
 
-        mockMvc.perform(post("/submit")
-                        .session((org.springframework.mock.web.MockHttpSession) session)
-                        .param("problemId", problem.getId().toString())
-                        .param("language", "Java")
-                        .param("code", "return a + b;"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("Duplicate request blocked"));
-        org.junit.jupiter.api.Assertions.assertTrue(fluxGuardRequestLogRepository.findAll().stream()
-                .anyMatch(log -> "Duplicate request blocked".equals(log.getFailureReason())));
+        for (int duplicate = 0; duplicate < 4; duplicate++) {
+                mockMvc.perform(post("/submit")
+                                .session((org.springframework.mock.web.MockHttpSession) session)
+                                .param("problemId", problem.getId().toString())
+                                .param("language", "Java")
+                                .param("code", "return a + b;"))
+                        .andExpect(status().isTooManyRequests())
+                        .andExpect(content().string("Duplicate request blocked"));
+        }
+        org.junit.jupiter.api.Assertions.assertEquals(requestsBeforeBurst + 5,
+                fluxGuardRequestLogRepository.countRelevantRequestsBetween(startOfDay, startOfTomorrow));
+        org.junit.jupiter.api.Assertions.assertEquals(successfulBeforeBurst + 1,
+                fluxGuardRequestLogRepository.countRelevantSuccessfulRequestsBetween(startOfDay, startOfTomorrow, 200, 399));
+        org.junit.jupiter.api.Assertions.assertEquals(failedBeforeBurst + 4,
+                fluxGuardRequestLogRepository.countMeaningfulFailedRequestsBetween(startOfDay, startOfTomorrow, 400));
+        org.junit.jupiter.api.Assertions.assertEquals(4, fluxGuardRequestLogRepository
+                .findTop100MeaningfulFailuresBetween(startOfDay, startOfTomorrow, 400).stream()
+                .filter(log -> "/submit".equals(log.getEndpoint())
+                        && "Duplicate request blocked".equals(log.getFailureReason()))
+                .count());
 
         mockMvc.perform(get("/problems").session((org.springframework.mock.web.MockHttpSession) session))
                 .andExpect(status().isOk())
@@ -152,6 +171,25 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("type=\"text\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("type=\"email\""))));
+    }
+
+    @Test
+    void currentUsersCountOnlyRecentAuthenticatedRequestSessions() {
+        LocalDateTime since = LocalDateTime.now().minusMinutes(5);
+        long usersBefore = fluxGuardRequestLogRepository.countActiveSessionsSince(since);
+        String authenticatedSessionId = "active-session-" + System.nanoTime();
+        String anonymousSessionId = "anonymous-session-" + System.nanoTime();
+        String authenticationEventSessionId = "auth-event-session-" + System.nanoTime();
+
+        FluxGuardRequestLog authenticatedRequest = activeSessionLog(authenticatedSessionId, 12L, "REQUEST");
+        FluxGuardRequestLog refreshRequest = activeSessionLog(authenticatedSessionId, 12L, "REQUEST");
+        FluxGuardRequestLog anonymousRequest = activeSessionLog(anonymousSessionId, null, "REQUEST");
+        FluxGuardRequestLog authenticationEvent = activeSessionLog(authenticationEventSessionId, 12L, "AUTHENTICATION");
+        fluxGuardRequestLogRepository.saveAll(List.of(
+                authenticatedRequest, refreshRequest, anonymousRequest, authenticationEvent));
+
+        org.junit.jupiter.api.Assertions.assertEquals(usersBefore + 1,
+                fluxGuardRequestLogRepository.countActiveSessionsSince(since));
     }
 
         @Test
@@ -242,4 +280,16 @@ class CodingPlatformMvpIntegrationTests {
                 log.setEventType("REQUEST");
                 return log;
             }
+
+                        private FluxGuardRequestLog activeSessionLog(String sessionId, Long userId, String eventType) {
+                                FluxGuardRequestLog log = new FluxGuardRequestLog();
+                                log.setTimestamp(LocalDateTime.now());
+                                log.setSessionId(sessionId);
+                                log.setUserId(userId);
+                                log.setEventType(eventType);
+                                log.setHttpMethod("GET");
+                                log.setEndpoint("/dashboard");
+                                log.setResponseStatus(200);
+                                return log;
+                        }
 }

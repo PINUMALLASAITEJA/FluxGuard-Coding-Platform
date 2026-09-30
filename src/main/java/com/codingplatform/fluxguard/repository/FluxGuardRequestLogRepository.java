@@ -82,11 +82,13 @@ public interface FluxGuardRequestLogRepository extends JpaRepository<FluxGuardRe
                                                                   @Param("status") int status);
 
     @Query("select count(distinct log.sessionId) from FluxGuardRequestLog log "
-        + "where log.timestamp >= :since and log.sessionId is not null and log.sessionId <> 'none'")
+        + "where log.timestamp >= :since and log.userId is not null "
+        + "and log.eventType = 'REQUEST' and log.sessionId is not null and log.sessionId <> 'none'")
     long countActiveSessionsSince(@Param("since") LocalDateTime since);
 
     @Query("select log.instanceId as instanceId, count(distinct log.sessionId) as activeUsers "
         + "from FluxGuardRequestLog log where log.timestamp >= :since "
+        + "and log.userId is not null and log.eventType = 'REQUEST' "
         + "and log.sessionId is not null and log.sessionId <> 'none' and log.instanceId is not null "
         + "group by log.instanceId order by log.instanceId")
     List<InstanceUserCount> findInstanceUserCountsSince(@Param("since") LocalDateTime since);

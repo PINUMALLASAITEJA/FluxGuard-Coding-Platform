@@ -52,8 +52,8 @@ public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (isProtectedAction(request) && isDuplicate(request)) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
+        if (isActionableRequest(request) && isDuplicate(request)) {
+            response.setStatus(429);
             response.setContentType("text/plain;charset=UTF-8");
             loggingService.recordFailedRequest(request, response, "Duplicate request blocked", currentAuthentication());
             response.getWriter().write("Duplicate request blocked");
@@ -98,24 +98,28 @@ public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
         return SQLI_AUTH_BYPASS.matcher(normalized).find();
     }
 
-    private boolean isProtectedAction(HttpServletRequest request) {
-        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+    private boolean isActionableRequest(HttpServletRequest request) {
+        String method = request.getMethod();
+        if (!("POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)
+                || "PATCH".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method))) {
             return false;
         }
+
         String path = request.getRequestURI();
-        return "/submit".equals(path)
-                || "/problems".equals(path)
-                || "/problems/import".equals(path)
-                || "/problems/import-exercism".equals(path)
-                || path.matches("/problems/\\d+/solve")
-                || path.matches("/problems/update/\\d+")
-                || path.matches("/problems/delete/\\d+");
+        return !"/login".equals(path)
+                && !"/register".equals(path)
+                && !"/logout".equals(path)
+                && !path.startsWith("/css/")
+                && !path.startsWith("/js/")
+                && !path.startsWith("/images/")
+                && !path.startsWith("/webjars/")
+                && !"/favicon.ico".equals(path);
     }
 
     private boolean isDuplicate(HttpServletRequest request) {
         String sessionId = request.getSession(false) == null
                 ? request.getRemoteAddr() : request.getSession(false).getId();
-        String key = sessionId + ':' + request.getRequestURI() + ':' + requestFingerprint(request);
+        String key = sessionId + ':' + request.getMethod() + ':' + request.getRequestURI() + ':' + requestFingerprint(request);
         return !deduplicationStore.claim(key, DUPLICATE_WINDOW);
     }
 
