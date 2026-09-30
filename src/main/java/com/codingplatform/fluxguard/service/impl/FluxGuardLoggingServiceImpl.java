@@ -90,8 +90,6 @@ public class FluxGuardLoggingServiceImpl implements FluxGuardLoggingService {
     public void recordAuthenticationEvent(HttpServletRequest request, int status, String reason,
                                           Authentication authentication) {
         FluxGuardRequestLog log = createRequestLog(request, null, authentication);
-        log.setEndpoint("/login");
-        log.setHttpMethod("POST");
         log.setResponseStatus(status);
         log.setEventType("AUTHENTICATION");
         log.setFailureReason(reason);

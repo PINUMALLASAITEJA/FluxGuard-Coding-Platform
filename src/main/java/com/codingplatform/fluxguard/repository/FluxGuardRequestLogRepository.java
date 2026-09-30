@@ -83,13 +83,25 @@ public interface FluxGuardRequestLogRepository extends JpaRepository<FluxGuardRe
 
     @Query("select count(distinct log.sessionId) from FluxGuardRequestLog log "
         + "where log.timestamp >= :since and log.userId is not null "
-        + "and log.eventType = 'REQUEST' and log.sessionId is not null and log.sessionId <> 'none'")
+        + "and log.eventType = 'REQUEST' and log.sessionId is not null and log.sessionId <> 'none' "
+        + "and log.endpoint not like '/favicon.ico' and log.endpoint not like '/css/%' "
+        + "and log.endpoint not like '/js/%' and log.endpoint not like '/images/%' "
+        + "and log.endpoint not like '/webjars/%' "
+        + "and not exists (select logoutEvent.id from FluxGuardRequestLog logoutEvent "
+        + "where logoutEvent.sessionId = log.sessionId and logoutEvent.eventType = 'AUTHENTICATION' "
+        + "and logoutEvent.failureReason = 'Logout' and logoutEvent.timestamp > log.timestamp)")
     long countActiveSessionsSince(@Param("since") LocalDateTime since);
 
     @Query("select log.instanceId as instanceId, count(distinct log.sessionId) as activeUsers "
         + "from FluxGuardRequestLog log where log.timestamp >= :since "
         + "and log.userId is not null and log.eventType = 'REQUEST' "
         + "and log.sessionId is not null and log.sessionId <> 'none' and log.instanceId is not null "
+        + "and log.endpoint not like '/favicon.ico' and log.endpoint not like '/css/%' "
+        + "and log.endpoint not like '/js/%' and log.endpoint not like '/images/%' "
+        + "and log.endpoint not like '/webjars/%' "
+        + "and not exists (select logoutEvent.id from FluxGuardRequestLog logoutEvent "
+        + "where logoutEvent.sessionId = log.sessionId and logoutEvent.eventType = 'AUTHENTICATION' "
+        + "and logoutEvent.failureReason = 'Logout' and logoutEvent.timestamp > log.timestamp) "
         + "group by log.instanceId order by log.instanceId")
     List<InstanceUserCount> findInstanceUserCountsSince(@Param("since") LocalDateTime since);
 

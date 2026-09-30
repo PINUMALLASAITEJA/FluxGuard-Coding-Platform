@@ -52,6 +52,11 @@ public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (isLogoutPost(request)) {
+            loggingService.recordAuthenticationEvent(request, HttpServletResponse.SC_OK,
+                    "Logout", currentAuthentication());
+        }
+
         if (isActionableRequest(request) && isDuplicate(request)) {
             response.setStatus(429);
             response.setContentType("text/plain;charset=UTF-8");
@@ -65,6 +70,10 @@ public class FluxGuardRequestProtectionFilter extends OncePerRequestFilter {
 
     private boolean isLoginPost(HttpServletRequest request) {
         return "POST".equalsIgnoreCase(request.getMethod()) && "/login".equals(request.getRequestURI());
+    }
+
+    private boolean isLogoutPost(HttpServletRequest request) {
+        return "POST".equalsIgnoreCase(request.getMethod()) && "/logout".equals(request.getRequestURI());
     }
 
     private boolean isSuspiciousLogin(String username) {

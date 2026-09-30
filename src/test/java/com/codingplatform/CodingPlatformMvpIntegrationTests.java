@@ -175,6 +175,10 @@ class CodingPlatformMvpIntegrationTests {
         mockMvc.perform(post("/logout").session((org.springframework.mock.web.MockHttpSession) session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
+        org.junit.jupiter.api.Assertions.assertTrue(fluxGuardRequestLogRepository.findAll().stream()
+                .anyMatch(log -> "AUTHENTICATION".equals(log.getEventType())
+                        && "Logout".equals(log.getFailureReason())
+                        && session.getId().equals(log.getSessionId())));
     }
 
     @Test
@@ -192,14 +196,27 @@ class CodingPlatformMvpIntegrationTests {
         String authenticatedSessionId = "active-session-" + System.nanoTime();
         String anonymousSessionId = "anonymous-session-" + System.nanoTime();
         String authenticationEventSessionId = "auth-event-session-" + System.nanoTime();
+        String secondAuthenticatedSessionId = "second-active-session-" + System.nanoTime();
+        String staleSessionId = "stale-session-" + System.nanoTime();
 
         FluxGuardRequestLog authenticatedRequest = activeSessionLog(authenticatedSessionId, 12L, "REQUEST");
         FluxGuardRequestLog refreshRequest = activeSessionLog(authenticatedSessionId, 12L, "REQUEST");
         FluxGuardRequestLog anonymousRequest = activeSessionLog(anonymousSessionId, null, "REQUEST");
         FluxGuardRequestLog authenticationEvent = activeSessionLog(authenticationEventSessionId, 12L, "AUTHENTICATION");
+        FluxGuardRequestLog secondSessionRequest = activeSessionLog(secondAuthenticatedSessionId, 13L, "REQUEST");
+        FluxGuardRequestLog logoutEvent = activeSessionLog(secondAuthenticatedSessionId, 13L, "AUTHENTICATION");
+        logoutEvent.setFailureReason("Logout");
+        logoutEvent.setTimestamp(secondSessionRequest.getTimestamp().plusSeconds(1));
+        FluxGuardRequestLog staleRequest = activeSessionLog(staleSessionId, 14L, "REQUEST");
+        staleRequest.setTimestamp(LocalDateTime.now().minusMinutes(6));
         fluxGuardRequestLogRepository.saveAll(List.of(
-                authenticatedRequest, refreshRequest, anonymousRequest, authenticationEvent));
+                authenticatedRequest, refreshRequest, anonymousRequest, authenticationEvent,
+                secondSessionRequest, staleRequest));
 
+        org.junit.jupiter.api.Assertions.assertEquals(usersBefore + 2,
+                fluxGuardRequestLogRepository.countActiveSessionsSince(since));
+
+        fluxGuardRequestLogRepository.save(logoutEvent);
         org.junit.jupiter.api.Assertions.assertEquals(usersBefore + 1,
                 fluxGuardRequestLogRepository.countActiveSessionsSince(since));
     }

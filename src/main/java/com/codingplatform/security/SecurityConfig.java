@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import com.codingplatform.fluxguard.filter.FluxGuardRequestProtectionFilter;
 import com.codingplatform.fluxguard.service.FluxGuardLoggingService;
@@ -66,15 +66,13 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
-                                fluxGuardLoggingService.recordAuthenticationEvent(request, HttpServletResponse.SC_OK,
-                                        "Logout", authentication);
                                 response.sendRedirect("/");
                         })
                         .permitAll()
                 );
 
-        http.addFilterBefore(new FluxGuardRequestProtectionFilter(fluxGuardLoggingService, requestDeduplicationStore),
-            UsernamePasswordAuthenticationFilter.class);
+                http.addFilterBefore(new FluxGuardRequestProtectionFilter(fluxGuardLoggingService, requestDeduplicationStore),
+                        LogoutFilter.class);
         return http.build();
     }
 
