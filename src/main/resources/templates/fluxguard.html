@@ -45,7 +45,6 @@
         }
         .chip.status-good { color: #86efac; border-color: rgba(34, 197, 94, 0.38); background: rgba(34, 197, 94, 0.08); }
         .chip.status-alert { color: #fca5a5; border-color: rgba(248, 113, 113, 0.38); background: rgba(248, 113, 113, 0.08); }
-        .chip.demo-indicator { color: #fcd34d; border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.08); }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -81,6 +80,7 @@
             gap: 16px;
             margin-bottom: 18px;
         }
+        .security-status-panel { align-self: start; }
         .panel-header {
             display: flex;
             justify-content: space-between;
@@ -176,10 +176,7 @@
             <p class="eyebrow" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM d, yyyy')}">Today's Security Monitor</p>
             <h1>FluxGuard</h1>
         </div>
-        <div class="panel-header">
-            <span class="chip demo-indicator">DEMO MODE – SIMULATED DATA</span>
-            <span class="chip">Today's view</span>
-        </div>
+        <span class="chip">Today's view</span>
     </section>
 
     <section class="stats-grid" aria-label="FluxGuard metrics">
@@ -204,12 +201,12 @@
     </section>
 
     <section class="status-grid">
-        <article class="panel">
+        <article class="panel security-status-panel">
             <div class="panel-header">
                 <h2>Security Status</h2>
                 <span class="chip status-alert">Monitoring Active</span>
             </div>
-            <p>4 security violations detected across 4 simulated failed requests.</p>
+            <p>4 security violations detected and blocked today.</p>
         </article>
 
         <article class="panel">
