@@ -45,6 +45,7 @@
         }
         .chip.status-good { color: #86efac; border-color: rgba(34, 197, 94, 0.38); background: rgba(34, 197, 94, 0.08); }
         .chip.status-alert { color: #fca5a5; border-color: rgba(248, 113, 113, 0.38); background: rgba(248, 113, 113, 0.08); }
+        .chip.demo-indicator { color: #fcd34d; border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.08); }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -96,18 +97,44 @@
             margin-top: 12px;
         }
         .server-item {
-            padding: 8px 10px;
+            display: grid;
+            grid-template-columns: minmax(70px, 1fr) minmax(50px, 2fr) auto;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
             border-radius: 8px;
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(148, 163, 184, 0.12);
             color: #e2e8f0;
         }
+        .server-users { color: #cbd5e1; white-space: nowrap; }
+        .server-track {
+            height: 8px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.16);
+        }
+        .server-track span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #38bdf8, #34d399);
+        }
+        .server-total {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 4px;
+            color: #f8fafc;
+            font-weight: 700;
+        }
+        .server-distribution { margin-top: 10px !important; }
         .failure-table-wrap { overflow-x: auto; }
         .failure-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            min-width: 700px;
+            min-width: 760px;
         }
         .failure-table th, .failure-table td {
             text-align: left;
@@ -149,27 +176,30 @@
             <p class="eyebrow" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, MMMM d, yyyy')}">Today's Security Monitor</p>
             <h1>FluxGuard</h1>
         </div>
-        <span class="chip">Today's view</span>
+        <div class="panel-header">
+            <span class="chip demo-indicator">DEMO MODE – SIMULATED DATA</span>
+            <span class="chip">Today's view</span>
+        </div>
     </section>
 
     <section class="stats-grid" aria-label="FluxGuard metrics">
         <article class="stat-card">
-            <h2>Today's Requests</h2>
-            <p th:text="${dashboard.todayRequests}">0</p>
+            <h2>Total Requests</h2>
+            <p>80</p>
         </article>
         <article class="stat-card">
             <h2>Successful Requests</h2>
-            <p th:text="${dashboard.successfulRequests}">0</p>
+            <p>76</p>
         </article>
         <article class="stat-card failed">
             <a class="failed-link" href="#failed-details" aria-label="View today's failed requests">
                 <h2>Failed Requests</h2>
-                <p th:text="${dashboard.failedRequests}">0</p>
+                <p>4</p>
             </a>
         </article>
         <article class="stat-card">
             <h2>Current Users</h2>
-            <p th:text="${dashboard.currentUsers}">0</p>
+            <p>60</p>
         </article>
     </section>
 
@@ -177,70 +207,93 @@
         <article class="panel">
             <div class="panel-header">
                 <h2>Security Status</h2>
-                <span class="chip" th:classappend="${dashboard.failedRequests > 0 ? 'status-alert' : 'status-good'}"
-                      th:text="${dashboard.failedRequests > 0 ? 'Monitoring Active' : 'Monitoring Active'}">Monitoring Active</span>
+                <span class="chip status-alert">Monitoring Active</span>
             </div>
-            <p th:text="${dashboard.failedRequests > 0 ? dashboard.failedRequests + ' failed requests recorded today.' : 'No failed requests recorded today.'}">No failed requests recorded today.</p>
+            <p>4 security violations detected across 4 simulated failed requests.</p>
         </article>
 
         <article class="panel">
             <div class="panel-header">
                 <h2>Load Balancing Status</h2>
-                <span class="chip" th:classappend="${dashboard.heavyTraffic ? 'status-alert' : 'status-good'}"
-                      th:text="${dashboard.heavyTraffic ? 'Active' : 'Inactive'}">Inactive</span>
+                <span class="chip status-good">Active</span>
             </div>
-            <div th:if="${dashboard.heavyTraffic}" class="server-stack">
-                <div class="server-item" th:each="instance : ${dashboard.instanceTraffic}"
-                     th:text="${instance.instanceId + ' → ' + instance.activeUsers + ' users'}">Server 1 → 0 users</div>
-                <p class="quiet" th:if="${#lists.isEmpty(dashboard.instanceTraffic)}">No backend instance telemetry available yet.</p>
+            <p>Total Active Users: <strong>60</strong></p>
+            <div class="server-stack" aria-label="Simulated user distribution across backend servers">
+                <div class="server-item">
+                    <strong>Server 1</strong>
+                    <div class="server-track" role="progressbar" aria-label="Server 1 users" aria-valuemin="0" aria-valuemax="60" aria-valuenow="20"><span style="width: 33.3%"></span></div>
+                    <span class="server-users">20 users</span>
+                </div>
+                <div class="server-item">
+                    <strong>Server 2</strong>
+                    <div class="server-track" role="progressbar" aria-label="Server 2 users" aria-valuemin="0" aria-valuemax="60" aria-valuenow="20"><span style="width: 33.3%"></span></div>
+                    <span class="server-users">20 users</span>
+                </div>
+                <div class="server-item">
+                    <strong>Server 3</strong>
+                    <div class="server-track" role="progressbar" aria-label="Server 3 users" aria-valuemin="0" aria-valuemax="60" aria-valuenow="20"><span style="width: 33.3%"></span></div>
+                    <span class="server-users">20 users</span>
+                </div>
+                <div class="server-total"><span>Total</span><span>60 users</span></div>
             </div>
-            <p class="quiet" th:unless="${dashboard.heavyTraffic}">No heavy-traffic load balancing detected.</p>
+            <p class="quiet server-distribution">Distribution: 33.3% per server</p>
         </article>
     </section>
 
     <section class="panel" id="failed-details" style="margin-top: 0;">
         <div class="panel-header">
             <h2>Failed Request Details</h2>
-            <span class="chip" th:text="${dashboard.failedRequests + ' today'}">0 today</span>
+            <span class="chip">4 simulated</span>
         </div>
 
-        <div class="failure-table-wrap" th:if="${!#lists.isEmpty(dashboard.failedRequestDetails)}">
+        <div class="failure-table-wrap">
             <table class="failure-table">
                 <thead>
                     <tr>
-                        <th>Time</th>
+                        <th>Username</th>
                         <th>Method</th>
                         <th>Endpoint</th>
                         <th>Status</th>
-                        <th>Failure reason</th>
-                        <th>User / IP</th>
+                        <th>Failure Reason</th>
+                        <th>Timestamp</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="failure : ${dashboard.failedRequestDetails}">
-                        <td th:text="${#temporals.format(failure.timestamp, 'HH:mm:ss')}">00:00:00</td>
-                        <td th:text="${failure.httpMethod}">POST</td>
-                        <td th:text="${failure.endpoint}">/login</td>
-                        <td th:text="${failure.responseStatus}">403</td>
-                        <td>
-                            <details>
-                                <summary th:text="${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Invalid credentials</summary>
-                                <div class="failure-detail">
-                                    <div th:text="'Timestamp: ' + ${#temporals.format(failure.timestamp, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</div>
-                                    <div th:text="'HTTP method: ' + ${failure.httpMethod}">HTTP method</div>
-                                    <div th:text="'Endpoint: ' + ${failure.endpoint}">Endpoint</div>
-                                    <div th:text="'HTTP status: ' + ${failure.responseStatus}">HTTP status</div>
-                                    <div th:text="'Failure reason: ' + ${failure.failureReason == null ? 'Request failed' : failure.failureReason}">Failure reason</div>
-                                </div>
-                            </details>
-                        </td>
-                        <td th:text="${failure.displayUsername != null ? failure.displayUsername : failure.ipAddress}">127.0.0.1</td>
+                    <tr>
+                        <td>saiteja01</td>
+                        <td>POST</td>
+                        <td>/problems/1/solve</td>
+                        <td>429</td>
+                        <td>Duplicate request blocked</td>
+                        <td th:text="${#temporals.format(#temporals.createNow().minusMinutes(2), 'yyyy-MM-dd HH:mm:ss')}">2026-11-20 13:15:00</td>
+                    </tr>
+                    <tr>
+                        <td>rahul_dev</td>
+                        <td>POST</td>
+                        <td>/login</td>
+                        <td>403</td>
+                        <td>SQL injection attempt detected</td>
+                        <td th:text="${#temporals.format(#temporals.createNow().minusMinutes(5), 'yyyy-MM-dd HH:mm:ss')}">2026-11-20 13:12:00</td>
+                    </tr>
+                    <tr>
+                        <td>arjun_k</td>
+                        <td>POST</td>
+                        <td>/login</td>
+                        <td>401</td>
+                        <td>Invalid credentials</td>
+                        <td th:text="${#temporals.format(#temporals.createNow().minusMinutes(8), 'yyyy-MM-dd HH:mm:ss')}">2026-11-20 13:09:00</td>
+                    </tr>
+                    <tr>
+                        <td>priya_dev</td>
+                        <td>POST</td>
+                        <td>/submissions</td>
+                        <td>403</td>
+                        <td>Suspicious pattern detected</td>
+                        <td th:text="${#temporals.format(#temporals.createNow().minusMinutes(12), 'yyyy-MM-dd HH:mm:ss')}">2026-11-20 13:05:00</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        <p class="quiet" th:if="${#lists.isEmpty(dashboard.failedRequestDetails)}">No failed requests recorded today.</p>
     </section>
 </main>
 </body>
