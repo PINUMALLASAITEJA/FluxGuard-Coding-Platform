@@ -15,17 +15,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.codingplatform.fluxguard.dto.FluxGuardDashboardView;
 import com.codingplatform.fluxguard.model.FluxGuardRequestLog;
 import com.codingplatform.fluxguard.repository.FluxGuardRequestLogRepository;
+import com.codingplatform.model.UserAccount;
+import com.codingplatform.repository.UserAccountRepository;
 import com.codingplatform.security.CustomUserDetails;
 
 @Controller
 public class FluxGuardController {
 
     private final FluxGuardRequestLogRepository requestLogRepository;
+    private final UserAccountRepository userAccountRepository;
     private final int heavyTrafficThreshold;
 
     public FluxGuardController(FluxGuardRequestLogRepository requestLogRepository,
+                              UserAccountRepository userAccountRepository,
                               @Value("${fluxguard.heavy-traffic-threshold:50}") int heavyTrafficThreshold) {
         this.requestLogRepository = requestLogRepository;
+        this.userAccountRepository = userAccountRepository;
         this.heavyTrafficThreshold = heavyTrafficThreshold;
     }
 
@@ -40,6 +45,14 @@ public class FluxGuardController {
         LocalDateTime activeSince = LocalDateTime.now().minus(5, ChronoUnit.MINUTES);
         long currentUsers = requestLogRepository.countActiveSessionsSince(activeSince);
         List<FluxGuardRequestLog> failures = requestLogRepository.findTop100MeaningfulFailuresBetween(startOfDay, startOfTomorrow, 400);
+        List<Long> userIds = failures.stream()
+            .map(FluxGuardRequestLog::getUserId)
+            .filter(userId -> userId != null)
+            .distinct()
+            .toList();
+        var usersById = userAccountRepository.findAllById(userIds).stream()
+            .collect(Collectors.toMap(UserAccount::getId, UserAccount::getFullName));
+        failures.forEach(failure -> failure.setDisplayUsername(usersById.get(failure.getUserId())));
         List<FluxGuardDashboardView.InstanceTraffic> distribution = requestLogRepository
             .findInstanceUserCountsSince(activeSince).stream()
             .map(item -> new FluxGuardDashboardView.InstanceTraffic(item.getInstanceId(), item.getActiveUsers(),

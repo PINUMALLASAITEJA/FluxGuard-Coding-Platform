@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "fluxguard_request_logs")
@@ -25,6 +26,9 @@ public class FluxGuardRequestLog {
 
     @Column(name = "username")
     private String username;
+
+    @Transient
+    private String displayUsername;
 
     @Column(name = "session_id")
     private String sessionId;
@@ -99,6 +103,14 @@ public class FluxGuardRequestLog {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDisplayUsername() {
+        return displayUsername;
+    }
+
+    public void setDisplayUsername(String displayUsername) {
+        this.displayUsername = displayUsername;
     }
 
     public String getSessionId() {

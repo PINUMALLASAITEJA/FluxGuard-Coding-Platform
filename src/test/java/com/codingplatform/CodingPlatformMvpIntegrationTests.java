@@ -163,11 +163,24 @@ class CodingPlatformMvpIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(view().name("dashboard.html"));
 
+        FluxGuardRequestLog unauthenticatedFailure = new FluxGuardRequestLog();
+        unauthenticatedFailure.setTimestamp(LocalDateTime.now());
+        unauthenticatedFailure.setHttpMethod("GET");
+        unauthenticatedFailure.setEndpoint("/test-unauthenticated-failure");
+        unauthenticatedFailure.setResponseStatus(403);
+        unauthenticatedFailure.setFailureReason("Unauthenticated test failure");
+        unauthenticatedFailure.setIpAddress("203.0.113.42");
+        unauthenticatedFailure.setEventType("REQUEST");
+        fluxGuardRequestLogRepository.save(unauthenticatedFailure);
+
         mockMvc.perform(get("/fluxguard").session((org.springframework.mock.web.MockHttpSession) session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("fluxguard"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Today's Requests")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Failed Request Details")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("MVP User")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("203.0.113.42")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString(email))))
                 .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Recent Activity"))))
                 .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Login History"))))
                 .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Devices"))));
