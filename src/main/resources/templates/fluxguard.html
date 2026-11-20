@@ -77,10 +77,44 @@
         .status-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: stretch;
             gap: 16px;
             margin-bottom: 18px;
         }
-        .security-status-panel { align-self: start; }
+        .violation-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            list-style: none;
+            margin: 12px 0 0;
+            padding: 0;
+        }
+        .violation-breakdown li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            padding: 8px 10px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            color: #e2e8f0;
+            font-size: 0.82rem;
+        }
+        .violation-dot {
+            width: 7px;
+            height: 7px;
+            flex: 0 0 7px;
+            border-radius: 50%;
+            background: #f87171;
+        }
+        .violation-breakdown li:nth-child(2) .violation-dot { background: #fb923c; }
+        .violation-breakdown li:nth-child(3) .violation-dot { background: #fbbf24; }
+        .violation-breakdown li:nth-child(4) .violation-dot { background: #c084fc; }
+        .violation-breakdown strong {
+            margin-left: auto;
+            color: #f8fafc;
+        }
         .panel-header {
             display: flex;
             justify-content: space-between;
@@ -164,6 +198,7 @@
             .fluxguard-shell { padding: 22px 14px 50px; }
             .fluxguard-top { flex-direction: column; align-items: flex-start; }
             .stats-grid, .status-grid { grid-template-columns: 1fr; }
+            .violation-breakdown { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -201,12 +236,18 @@
     </section>
 
     <section class="status-grid">
-        <article class="panel security-status-panel">
+        <article class="panel">
             <div class="panel-header">
                 <h2>Security Status</h2>
                 <span class="chip status-alert">Monitoring Active</span>
             </div>
             <p>4 security violations detected and blocked today.</p>
+            <ul class="violation-breakdown" aria-label="Security violation breakdown">
+                <li><span class="violation-dot" aria-hidden="true"></span><span>Duplicate Request</span><strong>1</strong></li>
+                <li><span class="violation-dot" aria-hidden="true"></span><span>SQL Injection</span><strong>1</strong></li>
+                <li><span class="violation-dot" aria-hidden="true"></span><span>Invalid Credentials</span><strong>1</strong></li>
+                <li><span class="violation-dot" aria-hidden="true"></span><span>Suspicious Pattern</span><strong>1</strong></li>
+            </ul>
         </article>
 
         <article class="panel">
